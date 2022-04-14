@@ -220,6 +220,13 @@ public final class MetricsNames {
     public static final String BK_WRITE_QUEUE_FILL_RATE = PREFIX + "segmentstore.bookkeeper.write_queue_fill";       // Per-container Histogram
     public static final String BK_LEDGER_COUNT = PREFIX + "segmentstore.bookkeeper.ledger_count";                    // Per-container Gauge
 
+    public static final String FS_TOTAL_WRITE_LATENCY = PREFIX + "segmentstore.filesystem.total_write_latency_ms";   // Including Queue. Per-container Histogram
+    public static final String FS_WRITE_LATENCY = PREFIX + "segmentstore.filesystem.write_latency_ms";               // Exclusively the write to BK. Per-container Histogram
+    public static final String FS_WRITE_BYTES = PREFIX + "segmentstore.filesystem.write_bytes";                      // Counter
+    public static final String FS_WRITE_QUEUE_SIZE = PREFIX + "segmentstore.filesystem.write_queue_size";            // Per-container Histogram
+    public static final String FS_WRITE_QUEUE_FILL_RATE = PREFIX + "segmentstore.filesystem.write_queue_fill";       // Per-container Histogram
+    public static final String FS_FILE_COUNT = PREFIX + "segmentstore.filesystem.file_count";                        // Per-container Gauge
+
     // StorageWriter stats
     public static final String STORAGE_WRITER_FLUSH_ELAPSED = PREFIX + "segmentstore.storagewriter.flush_elapsed_ms";         // Time to flush all processors. Per-container Histogram.
     public static final String STORAGE_WRITER_ITERATION_ELAPSED = PREFIX + "segmentstore.storagewriter.iteration_elapsed_ms"; // Total Iteration Duration. Per-container Histogram

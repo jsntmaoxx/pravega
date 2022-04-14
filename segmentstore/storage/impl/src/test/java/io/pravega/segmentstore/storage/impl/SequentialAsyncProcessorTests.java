@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pravega.segmentstore.storage.impl.bookkeeper;
+package io.pravega.segmentstore.storage.impl;
 
 import io.pravega.common.Exceptions;
 import io.pravega.common.util.RetriesExhaustedException;
 import io.pravega.common.util.Retry;
+import io.pravega.segmentstore.storage.impl.SequentialAsyncProcessor;
 import io.pravega.test.common.IntentionalException;
 import io.pravega.test.common.ThreadPooledTestSuite;
 import java.util.concurrent.CompletableFuture;
