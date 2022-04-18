@@ -107,7 +107,12 @@ public class ServiceConfig {
         /**
          * InMemory DataLog. Contents will be lost when the process exits.
          */
-        INMEMORY
+        INMEMORY,
+
+        /**
+         * DataLog is implemented by a Local FileSystem.
+         */
+        FILESYSTEM
     }
 
     public enum StorageType {

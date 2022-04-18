@@ -7,7 +7,6 @@ import io.pravega.common.io.serialization.RevisionDataInput;
 import io.pravega.common.io.serialization.RevisionDataOutput;
 import io.pravega.common.io.serialization.VersionedSerializer;
 import io.pravega.common.util.CollectionHelpers;
-import io.pravega.segmentstore.storage.ReadOnlyLogMetadata;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.val;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Metadata for a File-based log.
  */
-public class LogMetadata implements ReadOnlyLogMetadata {
+public class LogMetadata implements ReadOnlyFileSystemLogMetadata {
     //region Members
 
     static final VersionedSerializer.WithBuilder<LogMetadata, LogMetadata.LogMetadataBuilder> SERIALIZER = new Serializer();

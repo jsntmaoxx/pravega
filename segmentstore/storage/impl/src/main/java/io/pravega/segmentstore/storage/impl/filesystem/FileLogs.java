@@ -22,6 +22,7 @@ import java.util.Map;
 @Slf4j
 public class FileLogs {
     static final int NO_LOG_ID = -1; // INVALID_LOG_ID
+    static final int NO_FILE_SEQUENCE = -1; // INVALID_FILE_SEQUENCE
     static final long NO_ENTRY_ID = -1; // INVALID_ENTRY_ID
 
     /**
@@ -31,9 +32,15 @@ public class FileLogs {
     static final int REPAIR_LOG_ID = Integer.MAX_VALUE;
 
     /**
+     * For special log repair operations, we need to store the original content of the damaged log on a temporary backup
+     * log.
+     */
+    static final int BACKUP_LOG_ID = Integer.MAX_VALUE - 1;
+
+    /**
      * The root dir of file logs.
      */
-    static final String ROOT_DIR = "/home/maox2/Documents/logs";
+    static final String ROOT_DIR = "/tmp/logs";
 
     /**
      * How many files to open (from the end of the list) when acquiring lock.
@@ -218,8 +225,7 @@ public class FileLogs {
      * Gets the log id from the given {@link Path}, as stored in its file path.
      *
      * @param file The {@link Path} of the file to query.
-     * @return The Log Id stored in {@link Path}, or {@link #NO_LOG_ID} if not defined (i.e., due to an upgrade
-     * from a version that did not store this information).
+     * @return The Log Id stored in {@link Path}, or {@link #NO_LOG_ID} if not defined.
      */
     public static int getFileSystemLogId(Path file) {
         String logId = null;
@@ -238,6 +244,23 @@ public class FileLogs {
         } catch (NumberFormatException ex) {
             log.error("File {} has invalid log id '{}'. Returning default value.", file, logId);
             return NO_LOG_ID;
+        }
+    }
+
+    /**
+     * Gets the file created sequence from the given {@link Path}, as stored in its file path.
+     *
+     * @param file The {@link Path} of the file to query.
+     * @return The File Created Sequence stored in {@link Path}, or {@link #NO_FILE_SEQUENCE} if not defined.
+     */
+    public static int getFileCreatedSequence(Path file) {
+        String fileCreatedSequence = file.getFileName().toString();
+
+        try {
+            return Integer.parseInt(fileCreatedSequence);
+        } catch (NumberFormatException ex) {
+            log.error("File {} has invalid file created sequence '{}'. Returning default value.", file, fileCreatedSequence);
+            return NO_FILE_SEQUENCE;
         }
     }
 }

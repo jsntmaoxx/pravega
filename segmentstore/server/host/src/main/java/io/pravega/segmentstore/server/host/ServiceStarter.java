@@ -30,6 +30,8 @@ import io.pravega.segmentstore.server.host.delegationtoken.TokenVerifierImpl;
 import io.pravega.segmentstore.server.host.handler.AdminConnectionListener;
 import io.pravega.segmentstore.server.host.handler.PravegaConnectionListener;
 import io.pravega.segmentstore.server.host.health.ZKHealthContributor;
+import io.pravega.segmentstore.storage.impl.filesystem.FileSystemConfig;
+import io.pravega.segmentstore.storage.impl.filesystem.FileSystemLogFactory;
 import io.pravega.shared.health.bindings.resources.HealthImpl;
 import io.pravega.segmentstore.server.host.stat.AutoScaleMonitor;
 import io.pravega.segmentstore.server.host.stat.AutoScalerConfig;
@@ -247,6 +249,8 @@ public final class ServiceStarter {
                     return new BookKeeperLogFactory(setup.getConfig(BookKeeperConfig::builder), this.zkClient, setup.getCoreExecutor());
                 case INMEMORY:
                     return new InMemoryDurableDataLogFactory(setup.getCoreExecutor());
+                case FILESYSTEM:
+                    return new FileSystemLogFactory(setup.getConfig(FileSystemConfig::builder), this.zkClient, setup.getCoreExecutor());
                 default:
                     throw new IllegalStateException("Unsupported storage implementation: " + this.serviceConfig.getDataLogTypeImplementation());
             }

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A single Write in the BookKeeperLog Write Queue.
+ * A single Write in the FileSystemLog Write Queue.
  */
 public class Write {
     //region Members

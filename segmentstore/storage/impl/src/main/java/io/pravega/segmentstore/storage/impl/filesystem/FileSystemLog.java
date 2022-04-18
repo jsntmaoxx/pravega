@@ -24,6 +24,8 @@ import io.pravega.segmentstore.storage.ThrottlerSourceListenerCollection;
 import io.pravega.segmentstore.storage.WriteFailureException;
 import io.pravega.segmentstore.storage.WriteSettings;
 import io.pravega.segmentstore.storage.WriteTooLongException;
+import io.pravega.segmentstore.storage.impl.HierarchyUtils;
+import io.pravega.segmentstore.storage.impl.SequentialAsyncProcessor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -100,7 +102,7 @@ public class FileSystemLog implements DurableDataLog {
         this.config = Preconditions.checkNotNull(config, "config");
         this.executorService = Preconditions.checkNotNull(executorService, "executorService");
         this.closed = new AtomicBoolean();
-        this.logNodePath = HierarchyUtils.getPath(containerId, this.config.getFsZkHierarchyDepth());
+        this.logNodePath = HierarchyUtils.getPath(containerId, this.config.getZkHierarchyDepth());
         this.traceObjectId = String.format("Log[%d]", containerId);
         this.writes = new WriteQueue();
         val retry = createRetryPolicy(this.config.getFsMaxWriteAttempts(), this.config.getFsWriteTimeoutMillis());
@@ -545,27 +547,7 @@ public class FileSystemLog implements DurableDataLog {
         long lac = lastAddsConfirmed.getOrDefault(file, -1L);
         long traceId = LoggerHelpers.traceEnterWithContext(log, this.traceObjectId, "fetchLastAddConfirmed", file, lac);
         if (lac < 0) {
-            FileLock lock = null;
-            try {
-                RandomAccessFile raf = writeFile.raf;
-                try {
-                    lock = raf.getChannel().lock(0, Long.MAX_VALUE, true);
-                    if (lock != null) {
-                        raf.seek(0);
-                        while (raf.readLine() != null) {
-                            lac++;
-                        }
-                    }
-                } finally {
-                    if (lock != null) {
-                        lock.release();
-                    }
-                }
-            } catch (Exception ex) {
-                lac = FileLogs.NO_ENTRY_ID;
-            }
-            lastAddsConfirmed.put(file, lac);
-            log.info("{}: Fetched actual LastAddConfirmed ({}) for file {}.", this.traceObjectId, lac, file);
+            lac = FileLogs.getLastAddConfirmed(writeFile.raf, writeFile.file);
         }
 
         LoggerHelpers.traceLeave(log, this.traceObjectId, "fetchLastAddConfirmed", traceId, file, lac);
@@ -853,9 +835,30 @@ public class FileSystemLog implements DurableDataLog {
         return false;
     }
 
+    /**
+     * Persists the given metadata into ZooKeeper, overwriting whatever was there previously.
+     *
+     * @param metadata Thew metadata to write.
+     * @throws IllegalStateException    If this FileSystemLog is not disabled.
+     * @throws IllegalArgumentException If `metadata.getUpdateVersion` does not match the current version in ZooKeeper.
+     * @throws DurableDataLogException  If another kind of exception occurred. See {@link #persistMetadata}.
+     */
+    @VisibleForTesting
+    void overWriteMetadata(LogMetadata metadata) throws DurableDataLogException {
+        LogMetadata currentMetadata = loadMetadata();
+        boolean create = currentMetadata == null;
+        if (!create) {
+            Preconditions.checkState(!currentMetadata.isEnabled(), "Cannot overwrite metadata if FileSystemLog is enabled.");
+            Preconditions.checkArgument(currentMetadata.getUpdateVersion() == metadata.getUpdateVersion(),
+                    "Wrong Update Version; expected %s, given %s.", currentMetadata.getUpdateVersion(), metadata.getUpdateVersion());
+        }
+
+        persistMetadata(metadata, create);
+    }
+
     //endregion
 
-    //region Ledger Rollover
+    //region File Rollover
 
     /**
      * Triggers an asynchronous rollover, if the current Write File has exceeded its maximum length.

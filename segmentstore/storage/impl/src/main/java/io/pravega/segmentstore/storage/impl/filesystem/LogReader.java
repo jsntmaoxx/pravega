@@ -85,9 +85,10 @@ public class LogReader implements CloseableIterator<DurableDataLog.ReadItem, Dur
 
         while (this.currentFile != null && (!this.currentFile.canRead())) {
             // We have reached the end of the current file. Find next one, and skip over empty files).
-            val lastAddress = new FileAddress(this.currentFile.metadata, FileLogs.getLastAddConfirmed(this.currentFile.raf, this.currentFile.file));
+            long lastEntryId = FileLogs.getLastAddConfirmed(this.currentFile.raf, this.currentFile.file);
+            val lastAddress = new FileAddress(this.currentFile.metadata, lastEntryId);
             this.currentFile.close();
-            openNextFile(this.metadata.getNextAddress(lastAddress, FileLogs.getLastAddConfirmed(this.currentFile.raf, this.currentFile.file)));
+            openNextFile(this.metadata.getNextAddress(lastAddress, lastEntryId));
         }
 
         // Try to read from the current file.
@@ -118,7 +119,6 @@ public class LogReader implements CloseableIterator<DurableDataLog.ReadItem, Dur
             long lastEntryId = FileLogs.getLastAddConfirmed(raf, file);
             if (lastEntryId < address.getEntryId()) {
                 // This file is empty.
-                FileLogs.close(raf, file);
                 this.currentFile = ReadFile.empty(metadata, file, raf);
                 return;
             }

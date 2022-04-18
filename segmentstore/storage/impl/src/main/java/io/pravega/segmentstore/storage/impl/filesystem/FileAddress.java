@@ -52,7 +52,7 @@ public class FileAddress extends LogAddress implements Comparable<FileAddress> {
      */
     FileAddress(long addressSequence, Path file) {
         super(addressSequence);
-        Preconditions.checkArgument(file != null && !file.toString().isEmpty(), "file must not be empty.");
+        Preconditions.checkArgument(file != null, "file must not be null.");
         this.file = file;
     }
 

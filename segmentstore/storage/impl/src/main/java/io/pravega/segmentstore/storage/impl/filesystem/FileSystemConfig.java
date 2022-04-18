@@ -13,7 +13,8 @@ import lombok.Getter;
 public class FileSystemConfig {
     //region Config Names
 
-    public static final Property<Integer> FS_ZK_HIERARCHY_DEPTH = Property.named("fs.zk.metadata.hierarchy.depth", 2, "fsZkHierarchyDepth");
+    public static final Property<String> ZK_METADATA_PATH = Property.named("zk.metadata.path", "/segmentstore/containers/fs", "zkMetadataPath");
+    public static final Property<Integer> ZK_HIERARCHY_DEPTH = Property.named("zk.metadata.hierarchy.depth", 2, "zkHierarchyDepth");
     public static final Property<Integer> FS_MAX_WRITE_ATTEMPTS = Property.named("fs.write.attempts.count.max", 5, "fsMaxWriteAttempts");
     public static final Property<Integer> FS_WRITE_TIMEOUT = Property.named("fs.write.timeout.milliseconds", 60000, "fsWriteTimeoutMillis");
     public static final Property<Integer> FS_READ_BATCH_SIZE = Property.named("fs.read.batch.size", 64, "fsReadBatchSize");
@@ -31,11 +32,17 @@ public class FileSystemConfig {
     //region Members
 
     /**
+     * Sub-namespace to use for ZooKeeper LogMetadata.
+     */
+    @Getter
+    private final String zkMetadataPath;
+
+    /**
      * Depth of the node hierarchy in ZooKeeper. 0 means flat, N means N deep, where each level is indexed by its
      * respective log id digit.
      */
     @Getter
-    private final int fsZkHierarchyDepth;
+    private final int zkHierarchyDepth;
 
     /**
      * The maximum number of times to attempt a write.
@@ -80,10 +87,11 @@ public class FileSystemConfig {
      * @param properties The TypedProperties object to read Properties from.
      */
     private FileSystemConfig(TypedProperties properties) throws ConfigurationException {
-        this.fsZkHierarchyDepth = properties.getInt(FS_ZK_HIERARCHY_DEPTH);
-        if (this.fsZkHierarchyDepth < 0) {
+        this.zkMetadataPath = properties.get(ZK_METADATA_PATH);
+        this.zkHierarchyDepth = properties.getInt(ZK_HIERARCHY_DEPTH);
+        if (this.zkHierarchyDepth < 0) {
             throw new InvalidPropertyValueException(String.format("Property %s (%d) must be a non-negative integer.",
-                    FS_ZK_HIERARCHY_DEPTH, this.fsZkHierarchyDepth));
+                    ZK_HIERARCHY_DEPTH, this.zkHierarchyDepth));
         }
         this.fsMaxWriteAttempts = properties.getInt(FS_MAX_WRITE_ATTEMPTS);
         this.fsFileMaxSize = properties.getInt(FS_FILE_MAX_SIZE);
