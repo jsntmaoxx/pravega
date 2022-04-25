@@ -1,0 +1,49 @@
+package io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream;
+
+option java_package = "io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream";
+option java_outer_classname = "StreamProto";
+option java_multiple_files = false;
+
+message StreamPosition {
+  required int64 streamSequence = 1;
+  required int64 streamLogicalOffset = 2;
+  required int64 streamPhysicalOffset = 3;
+  required int64 chunkIdHigh = 4;
+  required int64 chunkIdLow = 5;
+  required int32 chunkOrder = 6;
+  required int32 chunkOffset = 7;
+}
+
+message StreamSegment {
+  required StreamPosition streamPosition = 1;
+  required int64 length = 5;
+}
+
+message StreamKey {
+  required bytes name = 1;
+}
+
+message StreamValue {
+  required int64 createTag = 1;
+  optional StreamPosition cursor = 2;
+}
+
+message StreamDataKey {
+  required bytes name = 1;
+  required int64 sequence = 2;
+}
+
+message StreamDataValue {
+  required int64 createTag = 1;
+  required bytes chunkIds = 2;
+  required bytes logicalOffsets = 3;
+  required bytes physicalOffsets = 4;
+  required int64 startLogicalOffset = 5;
+  required int64 endLogicalOffset = 6;
+  required int64 startPhysicalOffset = 7;
+  required int64 endPhysicalOffset = 8;
+  required int64 goodLogicalOffset = 9;
+  required int64 goodPhysicalOffset = 10;
+}
+
+
