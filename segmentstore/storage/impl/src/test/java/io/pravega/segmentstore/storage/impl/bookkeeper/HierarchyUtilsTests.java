@@ -15,7 +15,6 @@
  */
 package io.pravega.segmentstore.storage.impl.bookkeeper;
 
-import io.pravega.segmentstore.storage.impl.HierarchyUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -3,7 +3,6 @@ package io.pravega.segmentstore.storage.impl.chunkstream;
 import io.pravega.segmentstore.storage.QueueStats;
 import io.pravega.shared.MetricsNames;
 import io.pravega.shared.metrics.Counter;
-import io.pravega.shared.metrics.DynamicLogger;
 import io.pravega.shared.metrics.MetricsProvider;
 import io.pravega.shared.metrics.OpStatsLogger;
 import io.pravega.shared.metrics.StatsLogger;
@@ -14,7 +13,6 @@ import static io.pravega.shared.MetricsTags.containerTag;
 
 public class ChunkMetrics {
     private static final StatsLogger STATS_LOGGER = MetricsProvider.createStatsLogger("chunkstream");
-    private static final DynamicLogger DYNAMIC_LOGGER = MetricsProvider.getDynamicLogger();
 
     /**
      * ChunkStreamLog-specific (i.e. per Container) Metrics.

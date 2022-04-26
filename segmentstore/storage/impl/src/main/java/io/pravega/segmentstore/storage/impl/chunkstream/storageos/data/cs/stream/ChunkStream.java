@@ -1,5 +1,6 @@
 package io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream;
 
+import io.pravega.segmentstore.storage.QueueStats;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.CSException;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.ChunkConfig;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.G;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ChunkStream implements Stream {
+    static final int MAX_APPEND_LENGTH = 1024 * 1024 - 1024;
     private final CmClient cmClient;
     private final ChunkConfig chunkConfig;
     private final Executor executor;
@@ -87,6 +89,10 @@ public class ChunkStream implements Stream {
 
     public String getStreamId() {
         return streamId;
+    }
+
+    public QueueStats getQueueStatistics() {
+        return new QueueStats(0, 0, MAX_APPEND_LENGTH, 0);
     }
 
     private StreamPosition toStreamPosition(long streamOffset) {

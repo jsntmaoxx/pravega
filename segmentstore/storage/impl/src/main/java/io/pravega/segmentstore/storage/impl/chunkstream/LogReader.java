@@ -38,7 +38,7 @@ public class LogReader implements CloseableIterator<DurableDataLog.ReadItem, Dur
     /**
      * Creates a new instance of the LogReader class.
      *
-     * @param logId      The Id of the {@link ChunkStreamLog} to read from. This is used for validation purposes.
+     * @param logId      The id of the {@link ChunkStreamLog} to read from. This is used for validation purposes.
      * @param metadata   The LogMetadata of the Log to read.
      * @param logStream  The ChunkStream of the Log to read.
      */
