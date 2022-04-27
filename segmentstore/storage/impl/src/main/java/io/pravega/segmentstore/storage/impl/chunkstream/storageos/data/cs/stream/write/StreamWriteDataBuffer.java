@@ -9,21 +9,21 @@ import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.metric
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.StreamChunkObject;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.writer.buffer.WriteBatchBuffers;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.writer.buffer.WriteDataBuffer;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.CRC32;
 
-public class StreamWriteDataBuffer implements WriteDataBuffer<StreamPosition> {
+public class StreamWriteDataBuffer implements WriteDataBuffer<StreamProto.StreamPosition> {
     private static final Duration repoCRCDuration = Metrics.makeMetric("Heap.buffer.repo.crc.duration", Duration.class);
 
     private final ByteBuffer[] vData = new ByteBuffer[3];
     private final long createNano;
-    private final CompletableFuture<StreamPosition> completeFuture;
+    private final CompletableFuture<StreamProto.StreamPosition> completeFuture;
     private final AtomicLong streamLogicalOffset;
     private final AtomicLong streamPhysicalOffset;
     private long bufferLogicalOffset = -1;
@@ -139,7 +139,7 @@ public class StreamWriteDataBuffer implements WriteDataBuffer<StreamPosition> {
         location.logicalLength(dataLen);
 
         var streamObj = (StreamChunkObject) chunkObj;
-        return completeFuture.complete(StreamPosition.newBuilder()
+        return completeFuture.complete(StreamProto.StreamPosition.newBuilder()
                                                      .setStreamSequence(streamObj.streamSequence())
                                                      .setStreamLogicalOffset(location.logicalOffset())
                                                      .setStreamPhysicalOffset(streamObj.streamStartPhysicalOffset() + location.offset)
@@ -161,7 +161,7 @@ public class StreamWriteDataBuffer implements WriteDataBuffer<StreamPosition> {
     }
 
     @Override
-    public CompletableFuture<StreamPosition> completeFuture() {
+    public CompletableFuture<StreamProto.StreamPosition> completeFuture() {
         return completeFuture;
     }
 

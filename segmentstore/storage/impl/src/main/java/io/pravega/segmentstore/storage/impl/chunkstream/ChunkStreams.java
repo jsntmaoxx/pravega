@@ -10,6 +10,18 @@ import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream
 public class ChunkStreams {
 
     /**
+     * For special log repair operations, we allow the LogReader to read from a special log id that contains
+     * admin-provided changes to repair the original lod data.
+     */
+    static final int REPAIR_LOG_ID = Integer.MAX_VALUE;
+
+    /**
+     * For special log repair operations, we need to store the original content of the damaged log on a temporary backup
+     * log.
+     */
+    static final int BACKUP_LOG_ID = Integer.MAX_VALUE - 1;
+
+    /**
      * Open a Chunk Stream.
      * @param streamId The id of the stream to open.
      * @param stream A {@link ChunkStream} to open.

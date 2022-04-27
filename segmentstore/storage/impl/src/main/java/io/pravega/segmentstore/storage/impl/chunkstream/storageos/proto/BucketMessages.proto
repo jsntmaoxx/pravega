@@ -1,0 +1,600 @@
+package io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket;
+
+
+import "SchemaKeyRecords.proto";
+import "Bucket.proto";
+
+
+message ApiUserContext {
+    required string uid = 1;
+    repeated string groups = 2;
+    optional bool isTenantAdmin = 3;
+    optional string headType = 4;
+    optional bool isTrusted = 5 [default = false];
+    optional bool hdfsTrustedStatus = 6;
+    optional string mappedUid = 7;
+}
+
+enum BucketErrorResponseType
+{
+    ERROR_LIFECYCLE_DOES_NOT_EXIST=1;
+    ERROR_BUCKET_POLICY_DOES_NOT_EXIST=2;
+}
+
+message PolicyMsgData {
+    repeated PolicyKeyValue keyValue = 1;
+    optional bool iamUserPolicyAllowed = 2;
+    optional bool sessionPolicyInvolved = 3;
+    optional bool sessionPolicyAllowed = 4;
+}
+
+message PolicyKeyValue {
+    required string key = 1;
+    required string value = 2;
+}
+
+message CreateRequest {
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketInfo bucketInfo = 1;
+    required ApiUserContext userContext = 2;
+}
+
+message CreateResponse {
+    required string etag = 1;
+    required int64 ctime = 2;
+}
+
+message GetRequest {
+    required string bucketId = 1;
+    optional string bucketHashId = 2;
+}
+
+message GetResponse {
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketInfo bucketInfo = 1;
+}
+
+message DeleteRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional string etag = 3;
+    optional PolicyMsgData policyMsgData = 4;
+}
+
+message DeleteResponse {
+}
+
+message UpdateRequest {
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketInfo bucketInfo = 1;
+    optional string etag = 2;
+}
+
+message UpdateResponse {
+    required string etag = 1;
+}
+
+message ListRequest {
+    required string namespace = 1;
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaToken = 2;
+    optional int32  maxEntries = 3;
+    optional string prefix = 4;
+    optional ApiUserContext userContext = 5;
+    optional string requestZone = 6;
+}
+
+message ListResponse {
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaToken = 1;
+    repeated io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketInfo bucketInfo = 2;
+}
+/*
+
+message SetAclRequest {
+    required string bucketId            = 1;
+    required string aclStr              = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag                = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message SetAclResponse {
+    required string etag            = 1;
+    required string bucketIdSHA256  = 2;
+}
+
+message GetAclRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 3;
+}
+
+message GetAclResponse {
+    required string aclStr = 1;
+}
+
+message SetVersioningRequest {
+    required string bucketId = 1;
+    required string versioningStatus = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message SetVersioningResponse {
+    required string etag = 1;
+}
+
+message SetBucketLockConfigRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional PolicyMsgData policyMsgData = 3;
+    optional string etag = 4;
+    optional string mode = 5;
+    optional int64 seconds = 6;
+}
+
+message SetBucketLockConfigResponse {
+    required string etag = 1;
+}
+
+message EnableObjectLockRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional PolicyMsgData policyMsgData = 3;
+    optional string etag = 4;
+}
+
+message EnableObjectLockResponse {
+    required string etag = 1;
+}
+
+message SetVersioningSourceRequest {
+    required string bucketId = 1;
+    required string sourceKeyppol = 2;
+    optional string etag = 3;
+}
+
+message SetVersioningSourceResponse {
+    required string etag = 1;
+}
+
+message ChangeOwnerRequest {
+    required string bucketId = 1;
+    required string newOwnerId = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+    optional bool resetPreviousOwners = 5 [default = false];
+}
+
+message ChangeOwnerResponse {
+    required string etag = 1;
+}
+
+message ClearBucketLockRequest {
+    required string bucketId = 1;
+    required string paxosTag = 2;
+}
+
+message ClearBucketLockResponse {
+    required string etag = 1;
+}
+
+message ChangeIsStaleAllowedRequest {
+    required string bucketId = 1;
+    required bool isStaleAllowed = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message ChangeIsStaleAllowedResponse {
+    required string etag = 1;
+}
+
+message SetCorsConfigurationRequest {
+    required string bucketId = 1;
+    required string corsConfig = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message SetCorsConfigurationResponse {
+    required string etag = 1;
+}
+
+message DeleteCorsConfigurationRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional string etag = 3;
+    optional PolicyMsgData policyMsgData = 4;
+}
+
+message DeleteCorsConfigurationResponse {
+    required string etag = 1;
+}
+
+message SetExpirationPolicyRequest {
+    required string bucketId = 1;
+    required string expirationPolicy = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message SetBucketPolicyRequest {
+    required string bucketId = 1;
+    required string bucketPolicy = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message GetBucketPolicyRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 3;
+}
+message GetBucketPolicyResponse {
+    required string bucketPolicy = 1;
+}
+
+message SetExpirationPolicyResponse {
+    required string etag = 1;
+}
+
+message DeleteExpirationPolicyRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional string etag = 3;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message DeleteExpirationPolicyResponse {
+    required string etag = 1;
+    optional BucketErrorResponseType errorResponseType = 2;
+}
+
+message DeleteBucketPolicyRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional string etag = 3;
+    optional PolicyMsgData policyMsgData = 4;
+}
+
+message DeleteBucketPolicyResponse {
+    required string etag = 1;
+    optional BucketErrorResponseType errorResponseType = 2;
+}
+
+message SetMetadataRequest {
+    required string bucketId = 1;
+    repeated Metadata newMetadata = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message SetMetadataResponse {
+    required string etag = 1;
+}
+
+message GetMetadataRequest {
+    required string bucketId = 1;
+    repeated string keys = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message GetMetadataResponse {
+    repeated Metadata metadata = 1;
+}
+
+message SetHeadMetadataRequest {
+    required string bucketId = 1;
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.objcontrol.object.shared.HeadMetaData.HeadMetaData headMetadata = 2;
+    optional string etag = 3;
+}
+
+message SetHeadMetadataResponse {
+    required string etag = 1;
+}
+
+message GetHeadMetadataRequest {
+    required string bucketId = 1;
+    required string headType = 2;
+}
+
+message GetHeadMetadataResponse {
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.objcontrol.object.shared.HeadMetaData.HeadMetaData headMetadata = 1;
+}
+
+message Metadata {
+    required string key   = 1;
+    optional string value = 2;
+}
+
+message SetBucketLockRequest {
+    required string bucketId = 1;
+    required bool isLocked = 2;
+    optional string etag = 3;
+    required ApiUserContext userContext = 4;
+}
+
+message SetBucketLockResponse {
+    required string etag = 1;
+}
+
+message SetBucketQuotaRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional int64 blockSizeInGB = 3;
+    optional int64 notificationSizeInGB = 4;
+    optional string etag = 5;
+    optional int64 blockSizeInCount = 6;
+    optional int64 notificationSizeInCount = 7;
+}
+
+
+message SetBucketQuotaResponse {
+    required string etag = 1;
+}
+
+message BucketQueryRequest {
+    repeated string bucketId = 1;
+    optional ApiUserContext userContext = 2;
+}
+
+message BucketQueryResponse {
+    repeated io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketInfo bucketInfo = 1;
+}
+
+message SetBucketHardQuotaRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional int64 HardQuotaInGB = 3;
+    optional string etag = 4;
+    optional int64 SoftQuotaInGB = 5;
+    optional sint64 HardQuotaInCount = 6;
+    optional sint64 SoftQuotaInCount = 7;
+}
+
+message SetBucketHardQuotaResponse {
+    required string etag = 1;
+}
+
+message TakeBucketSnapshotRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional string etag = 3;
+    optional PolicyMsgData policyMsgData = 4;
+}
+
+message TakeBucketSnapshotResponse {
+    required int64 snapshotId = 1;
+    required int64 openSnapshotId = 2;
+    required string etag = 3;
+}
+
+message RevertBucketSnapshotRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    required int64 snapshotIdToRevert = 3;
+    optional string etag = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message RevertBucketSnapshotResponse {
+    required string etag = 1;
+}
+
+message DeleteBucketSnapshotRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    required int64 snapshotIdToDelete = 3;
+    optional string etag = 4;
+    optional PolicyMsgData policyMsgData = 5;
+}
+
+message DeleteBucketSnapshotResponse {
+    required string etag = 1;
+}
+
+//TODO: bucket snapshot can overspill to repo, we should return token and specify maxkey limit
+message ListBucketSnapshotRequest {
+    required string bucketId = 1;
+    required ApiUserContext userContext = 2;
+    optional string etag = 3;
+    optional int64 token = 4; //snapshot id for the token, 0 means no token
+    optional int32 maxEntries = 5; // -1 means no limit
+    optional PolicyMsgData policyMsgData = 6;
+}
+
+message ListBucketSnapshotResponse {
+    required int64 openSnapshotId = 1;
+    required int64 baseSnapshotId = 2;
+    repeated io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketSnapshotItem bucketSnapshotItem = 3;
+    optional int64 token = 4; //snapshot id for the next token if there is one
+    optional int64 currentDeleteSequence = 5;
+}
+
+message SetActiveKeyIdRequest {
+    required string bucketId = 1;
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.object.config.KeK kek = 2;
+}
+
+message SetActiveKeyIdResponse {
+    required string etag = 1;
+}
+
+message GetOrCreateKekRequest{
+    required string bucketId = 1;
+}
+message GetOrCreateKekResponse{
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.object.config.KeK kek = 1;
+}
+
+message SetBucketComplianceRequest {
+    required string bucketId = 1;
+    required bool isComplianceEnabled = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message SetBucketComplianceResponse {
+    required string etag = 1;
+}
+
+message AddBucketGenericMetaDataRequest {
+    required string bucketId = 1;
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.objcontrol.object.shared.HeadMetaData.GenericMetaDataList genericMDList = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message AddBucketGenericMetaDataResponse {
+    required string etag = 1;
+}
+
+message UpdateBucketGenericMetaDataRequest {
+    required string bucketId = 1;
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.objcontrol.object.shared.HeadMetaData.GenericMetaDataList genericMDList = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message UpdateBucketGenericMetaDataResponse {
+    required string etag = 1;
+}
+
+message DeleteBucketGenericMetaDataRequest {
+    required string bucketId = 1;
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.objcontrol.object.shared.HeadMetaData.GenericMetaDataList genericMDList = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message DeleteBucketGenericMetaDataResponse {
+    required string etag = 1;
+}
+
+message SetIsMetadataSearchEnabledRequest {
+    required string bucketId = 1;
+    required bool isMetadataSearchEnabled = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message SetIsMetadataSearchEnabledResponse {
+    required string etag = 1;
+}
+
+message DeleteBucketStateSnapshotRequest {
+    required string bucketId = 1;
+    repeated int64 snapshotId = 2;
+    optional PolicyMsgData policyMsgData = 3;
+}
+
+message DeleteBucketStateSnapshotResponse {
+    optional string etag = 1;
+}
+message SetIsListableTagUpgradedRequest {
+    required string bucketId = 1;
+    required bool isListableTagUpgraded = 2;
+    optional string etag = 3;
+}
+
+message SetIsListableTagUpgradedResponse {
+    required string etag = 1;
+}
+
+message PutReplicationPolicyRequest {
+    required ApiUserContext userContext = 1;
+    required string bucketId = 2;
+    required string policy = 3;
+    optional string etag = 4;
+}
+
+message PutReplicationPolicyResponse {
+    required string etag = 1;
+}
+
+message DeleteReplicationPolicyRequest {
+    required ApiUserContext userContext = 1;
+    required string bucketId = 2;
+    optional string etag = 3;
+}
+
+message DeleteReplicationPolicyResponse {
+}
+
+
+message GetReplicationPolicyRequest {
+    required ApiUserContext userContext = 1;
+    required string bucketId = 2;
+    optional bool awsCompatFormat = 3;
+}
+
+message GetReplicationPolicyResponse {
+    required string policy = 1;
+    optional string etag = 2;
+    optional int64 mtime = 3;
+}
+
+message GetParsedReplicationPolicyRequest {
+    required string bucketId = 1;
+    optional string etag = 2;
+}
+
+message GetParsedReplicationPolicyResponse {
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketReplicationPolicy policy = 1;
+    optional string etag = 2;
+}
+
+message PutNotificationConfigRequest {
+    required ApiUserContext userContext = 1;
+    required string bucketId = 2;
+    optional string config = 3;
+}
+
+message PutNotificationConfigResponse {
+    optional string etag = 1;
+}
+
+message GetNotificationConfigRequest {
+    required ApiUserContext userContext = 1;
+    required string bucketId = 2;
+}
+
+message GetNotificationConfigResponse {
+    required string config = 1;
+    optional string etag = 2;
+    optional int64 mtime = 3;
+}
+
+message GetParsedNotificationConfigRequest {
+    required string bucketId = 1;
+    optional string etag = 2;
+}
+
+message GetParsedNotificationConfigResponse {
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket.BucketNotificationConfig config = 1;
+    optional string etag = 2;
+
+}
+
+message SetIsAdvancedMetadataSearchEnabledRequest {
+    required string bucketId = 1;
+    required bool isAdvancedMetadataSearchEnabled = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message SetIsAdvancedMetadataSearchEnabledResponse {
+    required string etag = 1;
+}
+
+message SetAdvancedMetadataSearchTargetRequest {
+    required string bucketId = 1;
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.object.advancedmetadatasearch.BucketAdvancedMetadataSearchEventTarget target = 2;
+    required ApiUserContext userContext = 3;
+    optional string etag = 4;
+}
+
+message SetAdvancedMetadataSearchTargetResponse {
+    required string etag = 1;
+}
+*/

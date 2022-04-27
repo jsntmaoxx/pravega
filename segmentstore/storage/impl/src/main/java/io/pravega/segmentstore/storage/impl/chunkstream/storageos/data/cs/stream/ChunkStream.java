@@ -9,7 +9,6 @@ import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.write.StreamWriteDataBuffer;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.write.StreamWriter;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.nio.ByteBuffer;
@@ -55,7 +54,7 @@ public class ChunkStream implements Stream {
         return appendStream(data).thenApply(this::toStreamPhysicalOffset);
     }
 
-    public CompletableFuture<StreamPosition> appendStream(ByteBuffer data) throws CSException {
+    public CompletableFuture<StreamProto.StreamPosition> appendStream(ByteBuffer data) throws CSException {
         var dataBuffer =
                 new StreamWriteDataBuffer(streamLogicalOffset, streamPhysicalOffset, data, G.genRequestId())
                         .updateHeader()
@@ -95,11 +94,11 @@ public class ChunkStream implements Stream {
         return new QueueStats(0, 0, MAX_APPEND_LENGTH, 0);
     }
 
-    private StreamPosition toStreamPosition(long streamOffset) {
+    private StreamProto.StreamPosition toStreamPosition(long streamOffset) {
         return null;
     }
 
-    private long toStreamPhysicalOffset(StreamPosition position) {
+    private long toStreamPhysicalOffset(StreamProto.StreamPosition position) {
         return position.getStreamPhysicalOffset();
     }
 }

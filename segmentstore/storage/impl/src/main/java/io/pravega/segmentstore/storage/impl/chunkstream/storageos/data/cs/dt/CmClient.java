@@ -8,9 +8,7 @@ import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.StreamChunkObject;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.cm.CmMessage;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.dt.DTRecords;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue;
+import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKeyRecords;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -69,13 +67,13 @@ public interface CmClient {
     /*
     stream
      */
-    CompletableFuture<StreamValue> queryStream(String streamName);
+    CompletableFuture<StreamProto.StreamValue> queryStream(String streamName);
 
-    CompletableFuture<StreamValue> createStreamIfAbsent(String streamName);
+    CompletableFuture<StreamProto.StreamValue> createStreamIfAbsent(String streamName);
 
-    CompletableFuture<List<StreamDataValue>> listStreamDataValue(String streamName, long startSequence, int max);
+    CompletableFuture<List<StreamProto.StreamDataValue>> listStreamDataValue(String streamName, long startSequence, int max);
 
     CompletableFuture<List<StreamChunkObject>> createStreamChunk(String streamId, List<UUID> chunkIds, ChunkConfig chunkConfig) throws IOException;
 
-    CompletableFuture<Void> truncateStream(String streamId, StreamPosition streamOffset);
+    CompletableFuture<Void> truncateStream(String streamId, StreamProto.StreamPosition streamOffset);
 }

@@ -6,13 +6,7 @@ package io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream;
 public final class StreamProto {
   private StreamProto() {}
   public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
-  }
-
-  public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface StreamPositionOrBuilder extends
       // @@protoc_insertion_point(interface_extends:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition)
@@ -84,34 +78,37 @@ public final class StreamProto {
   /**
    * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition}
    */
-  public  static final class StreamPosition extends
-      com.google.protobuf.GeneratedMessageV3 implements
+  public static final class StreamPosition extends
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition)
       StreamPositionOrBuilder {
     // Use StreamPosition.newBuilder() to construct.
-    private StreamPosition(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private StreamPosition(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StreamPosition() {
-      streamSequence_ = 0L;
-      streamLogicalOffset_ = 0L;
-      streamPhysicalOffset_ = 0L;
-      chunkIdHigh_ = 0L;
-      chunkIdLow_ = 0L;
-      chunkOrder_ = 0;
-      chunkOffset_ = 0;
+    private StreamPosition(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StreamPosition defaultInstance;
+    public static StreamPosition getDefaultInstance() {
+      return defaultInstance;
     }
 
+    public StreamPosition getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
+        getUnknownFields() {
       return this.unknownFields;
     }
     private StreamPosition(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
+      initFields();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -171,7 +168,7 @@ public final class StreamProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
+            e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -182,11 +179,26 @@ public final class StreamProto {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.class, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StreamPosition> PARSER =
+        new com.google.protobuf.AbstractParser<StreamPosition>() {
+      public StreamPosition parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StreamPosition(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StreamPosition> getParserForType() {
+      return PARSER;
     }
 
     private int bitField0_;
@@ -295,6 +307,15 @@ public final class StreamProto {
       return chunkOffset_;
     }
 
+    private void initFields() {
+      streamSequence_ = 0L;
+      streamLogicalOffset_ = 0L;
+      streamPhysicalOffset_ = 0L;
+      chunkIdHigh_ = 0L;
+      chunkIdLow_ = 0L;
+      chunkOrder_ = 0;
+      chunkOffset_ = 0;
+    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -335,6 +356,7 @@ public final class StreamProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt64(1, streamSequence_);
       }
@@ -356,11 +378,12 @@ public final class StreamProto {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(7, chunkOffset_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
+    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSize;
+      int size = memoizedSerializedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -392,105 +415,16 @@ public final class StreamProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(7, chunkOffset_);
       }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition)) {
-        return super.equals(obj);
-      }
-      io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition other = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition) obj;
-
-      boolean result = true;
-      result = result && (hasStreamSequence() == other.hasStreamSequence());
-      if (hasStreamSequence()) {
-        result = result && (getStreamSequence()
-            == other.getStreamSequence());
-      }
-      result = result && (hasStreamLogicalOffset() == other.hasStreamLogicalOffset());
-      if (hasStreamLogicalOffset()) {
-        result = result && (getStreamLogicalOffset()
-            == other.getStreamLogicalOffset());
-      }
-      result = result && (hasStreamPhysicalOffset() == other.hasStreamPhysicalOffset());
-      if (hasStreamPhysicalOffset()) {
-        result = result && (getStreamPhysicalOffset()
-            == other.getStreamPhysicalOffset());
-      }
-      result = result && (hasChunkIdHigh() == other.hasChunkIdHigh());
-      if (hasChunkIdHigh()) {
-        result = result && (getChunkIdHigh()
-            == other.getChunkIdHigh());
-      }
-      result = result && (hasChunkIdLow() == other.hasChunkIdLow());
-      if (hasChunkIdLow()) {
-        result = result && (getChunkIdLow()
-            == other.getChunkIdLow());
-      }
-      result = result && (hasChunkOrder() == other.hasChunkOrder());
-      if (hasChunkOrder()) {
-        result = result && (getChunkOrder()
-            == other.getChunkOrder());
-      }
-      result = result && (hasChunkOffset() == other.hasChunkOffset());
-      if (hasChunkOffset()) {
-        result = result && (getChunkOffset()
-            == other.getChunkOffset());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      if (hasStreamSequence()) {
-        hash = (37 * hash) + STREAMSEQUENCE_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getStreamSequence());
-      }
-      if (hasStreamLogicalOffset()) {
-        hash = (37 * hash) + STREAMLOGICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getStreamLogicalOffset());
-      }
-      if (hasStreamPhysicalOffset()) {
-        hash = (37 * hash) + STREAMPHYSICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getStreamPhysicalOffset());
-      }
-      if (hasChunkIdHigh()) {
-        hash = (37 * hash) + CHUNKIDHIGH_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getChunkIdHigh());
-      }
-      if (hasChunkIdLow()) {
-        hash = (37 * hash) + CHUNKIDLOW_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getChunkIdLow());
-      }
-      if (hasChunkOrder()) {
-        hash = (37 * hash) + CHUNKORDER_FIELD_NUMBER;
-        hash = (53 * hash) + getChunkOrder();
-      }
-      if (hasChunkOffset()) {
-        hash = (37 * hash) + CHUNKOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + getChunkOffset();
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
     }
 
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseFrom(
@@ -516,57 +450,46 @@ public final class StreamProto {
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
+      return PARSER.parseDelimitedFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
 
+    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
     public static Builder newBuilder(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      return newBuilder().mergeFrom(prototype);
     }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
+    public Builder toBuilder() { return newBuilder(this); }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -574,7 +497,7 @@ public final class StreamProto {
      * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition)
         io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -582,7 +505,7 @@ public final class StreamProto {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -595,15 +518,18 @@ public final class StreamProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
         }
       }
+      private static Builder create() {
+        return new Builder();
+      }
+
       public Builder clear() {
         super.clear();
         streamSequence_ = 0L;
@@ -621,6 +547,10 @@ public final class StreamProto {
         chunkOffset_ = 0;
         bitField0_ = (bitField0_ & ~0x00000040);
         return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -677,32 +607,6 @@ public final class StreamProto {
         return result;
       }
 
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition) {
           return mergeFrom((io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition)other);
@@ -735,31 +639,37 @@ public final class StreamProto {
         if (other.hasChunkOffset()) {
           setChunkOffset(other.getChunkOffset());
         }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
+        this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasStreamSequence()) {
+          
           return false;
         }
         if (!hasStreamLogicalOffset()) {
+          
           return false;
         }
         if (!hasStreamPhysicalOffset()) {
+          
           return false;
         }
         if (!hasChunkIdHigh()) {
+          
           return false;
         }
         if (!hasChunkIdLow()) {
+          
           return false;
         }
         if (!hasChunkOrder()) {
+          
           return false;
         }
         if (!hasChunkOffset()) {
+          
           return false;
         }
         return true;
@@ -774,7 +684,7 @@ public final class StreamProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
+          throw e;
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1007,53 +917,16 @@ public final class StreamProto {
         onChanged();
         return this;
       }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
 
       // @@protoc_insertion_point(builder_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition)
     }
 
-    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition)
-    private static final io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition();
+      defaultInstance = new StreamPosition(true);
+      defaultInstance.initFields();
     }
 
-    public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<StreamPosition>
-        PARSER = new com.google.protobuf.AbstractParser<StreamPosition>() {
-      public StreamPosition parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StreamPosition(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<StreamPosition> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<StreamPosition> getParserForType() {
-      return PARSER;
-    }
-
-    public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
+    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition)
   }
 
   public interface StreamSegmentOrBuilder extends
@@ -1085,28 +958,37 @@ public final class StreamProto {
   /**
    * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment}
    */
-  public  static final class StreamSegment extends
-      com.google.protobuf.GeneratedMessageV3 implements
+  public static final class StreamSegment extends
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment)
       StreamSegmentOrBuilder {
     // Use StreamSegment.newBuilder() to construct.
-    private StreamSegment(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private StreamSegment(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StreamSegment() {
-      length_ = 0L;
+    private StreamSegment(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StreamSegment defaultInstance;
+    public static StreamSegment getDefaultInstance() {
+      return defaultInstance;
     }
 
+    public StreamSegment getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
+        getUnknownFields() {
       return this.unknownFields;
     }
     private StreamSegment(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
+      initFields();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -1149,7 +1031,7 @@ public final class StreamProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
+            e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1160,11 +1042,26 @@ public final class StreamProto {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment.class, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StreamSegment> PARSER =
+        new com.google.protobuf.AbstractParser<StreamSegment>() {
+      public StreamSegment parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StreamSegment(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StreamSegment> getParserForType() {
+      return PARSER;
     }
 
     private int bitField0_;
@@ -1180,13 +1077,13 @@ public final class StreamProto {
      * <code>required .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition streamPosition = 1;</code>
      */
     public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition getStreamPosition() {
-      return streamPosition_ == null ? io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : streamPosition_;
+      return streamPosition_;
     }
     /**
      * <code>required .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition streamPosition = 1;</code>
      */
     public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder getStreamPositionOrBuilder() {
-      return streamPosition_ == null ? io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : streamPosition_;
+      return streamPosition_;
     }
 
     public static final int LENGTH_FIELD_NUMBER = 5;
@@ -1204,6 +1101,10 @@ public final class StreamProto {
       return length_;
     }
 
+    private void initFields() {
+      streamPosition_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
+      length_ = 0L;
+    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1228,78 +1129,40 @@ public final class StreamProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeMessage(1, getStreamPosition());
+        output.writeMessage(1, streamPosition_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt64(5, length_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
+    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSize;
+      int size = memoizedSerializedSize;
       if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, getStreamPosition());
+          .computeMessageSize(1, streamPosition_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(5, length_);
       }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment)) {
-        return super.equals(obj);
-      }
-      io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment other = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment) obj;
-
-      boolean result = true;
-      result = result && (hasStreamPosition() == other.hasStreamPosition());
-      if (hasStreamPosition()) {
-        result = result && getStreamPosition()
-            .equals(other.getStreamPosition());
-      }
-      result = result && (hasLength() == other.hasLength());
-      if (hasLength()) {
-        result = result && (getLength()
-            == other.getLength());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      if (hasStreamPosition()) {
-        hash = (37 * hash) + STREAMPOSITION_FIELD_NUMBER;
-        hash = (53 * hash) + getStreamPosition().hashCode();
-      }
-      if (hasLength()) {
-        hash = (37 * hash) + LENGTH_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getLength());
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
     }
 
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseFrom(
@@ -1325,57 +1188,46 @@ public final class StreamProto {
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
+      return PARSER.parseDelimitedFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
 
+    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
     public static Builder newBuilder(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      return newBuilder().mergeFrom(prototype);
     }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
+    public Builder toBuilder() { return newBuilder(this); }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -1383,7 +1235,7 @@ public final class StreamProto {
      * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment)
         io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegmentOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -1391,7 +1243,7 @@ public final class StreamProto {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1404,20 +1256,23 @@ public final class StreamProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getStreamPositionFieldBuilder();
         }
       }
+      private static Builder create() {
+        return new Builder();
+      }
+
       public Builder clear() {
         super.clear();
         if (streamPositionBuilder_ == null) {
-          streamPosition_ = null;
+          streamPosition_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
         } else {
           streamPositionBuilder_.clear();
         }
@@ -1425,6 +1280,10 @@ public final class StreamProto {
         length_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -1465,32 +1324,6 @@ public final class StreamProto {
         return result;
       }
 
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment) {
           return mergeFrom((io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment)other);
@@ -1508,19 +1341,21 @@ public final class StreamProto {
         if (other.hasLength()) {
           setLength(other.getLength());
         }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
+        this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasStreamPosition()) {
+          
           return false;
         }
         if (!hasLength()) {
+          
           return false;
         }
         if (!getStreamPosition().isInitialized()) {
+          
           return false;
         }
         return true;
@@ -1535,7 +1370,7 @@ public final class StreamProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
+          throw e;
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1545,8 +1380,8 @@ public final class StreamProto {
       }
       private int bitField0_;
 
-      private io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition streamPosition_ = null;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition streamPosition_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
           io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder> streamPositionBuilder_;
       /**
        * <code>required .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition streamPosition = 1;</code>
@@ -1559,7 +1394,7 @@ public final class StreamProto {
        */
       public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition getStreamPosition() {
         if (streamPositionBuilder_ == null) {
-          return streamPosition_ == null ? io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : streamPosition_;
+          return streamPosition_;
         } else {
           return streamPositionBuilder_.getMessage();
         }
@@ -1600,7 +1435,6 @@ public final class StreamProto {
       public Builder mergeStreamPosition(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition value) {
         if (streamPositionBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001) &&
-              streamPosition_ != null &&
               streamPosition_ != io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance()) {
             streamPosition_ =
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.newBuilder(streamPosition_).mergeFrom(value).buildPartial();
@@ -1619,7 +1453,7 @@ public final class StreamProto {
        */
       public Builder clearStreamPosition() {
         if (streamPositionBuilder_ == null) {
-          streamPosition_ = null;
+          streamPosition_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
           onChanged();
         } else {
           streamPositionBuilder_.clear();
@@ -1642,18 +1476,17 @@ public final class StreamProto {
         if (streamPositionBuilder_ != null) {
           return streamPositionBuilder_.getMessageOrBuilder();
         } else {
-          return streamPosition_ == null ?
-              io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : streamPosition_;
+          return streamPosition_;
         }
       }
       /**
        * <code>required .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition streamPosition = 1;</code>
        */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private com.google.protobuf.SingleFieldBuilder<
           io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder> 
           getStreamPositionFieldBuilder() {
         if (streamPositionBuilder_ == null) {
-          streamPositionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+          streamPositionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder>(
                   getStreamPosition(),
                   getParentForChildren(),
@@ -1694,53 +1527,16 @@ public final class StreamProto {
         onChanged();
         return this;
       }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
 
       // @@protoc_insertion_point(builder_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment)
     }
 
-    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment)
-    private static final io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment();
+      defaultInstance = new StreamSegment(true);
+      defaultInstance.initFields();
     }
 
-    public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<StreamSegment>
-        PARSER = new com.google.protobuf.AbstractParser<StreamSegment>() {
-      public StreamSegment parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StreamSegment(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<StreamSegment> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<StreamSegment> getParserForType() {
-      return PARSER;
-    }
-
-    public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamSegment getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
+    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamSegment)
   }
 
   public interface StreamKeyOrBuilder extends
@@ -1759,28 +1555,37 @@ public final class StreamProto {
   /**
    * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey}
    */
-  public  static final class StreamKey extends
-      com.google.protobuf.GeneratedMessageV3 implements
+  public static final class StreamKey extends
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey)
       StreamKeyOrBuilder {
     // Use StreamKey.newBuilder() to construct.
-    private StreamKey(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private StreamKey(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StreamKey() {
-      name_ = com.google.protobuf.ByteString.EMPTY;
+    private StreamKey(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StreamKey defaultInstance;
+    public static StreamKey getDefaultInstance() {
+      return defaultInstance;
     }
 
+    public StreamKey getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
+        getUnknownFields() {
       return this.unknownFields;
     }
     private StreamKey(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
+      initFields();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -1810,7 +1615,7 @@ public final class StreamProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
+            e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1821,11 +1626,26 @@ public final class StreamProto {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey.class, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StreamKey> PARSER =
+        new com.google.protobuf.AbstractParser<StreamKey>() {
+      public StreamKey parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StreamKey(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StreamKey> getParserForType() {
+      return PARSER;
     }
 
     private int bitField0_;
@@ -1844,6 +1664,9 @@ public final class StreamProto {
       return name_;
     }
 
+    private void initFields() {
+      name_ = com.google.protobuf.ByteString.EMPTY;
+    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1860,14 +1683,16 @@ public final class StreamProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeBytes(1, name_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
+    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSize;
+      int size = memoizedSerializedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -1875,46 +1700,16 @@ public final class StreamProto {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, name_);
       }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey)) {
-        return super.equals(obj);
-      }
-      io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey other = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey) obj;
-
-      boolean result = true;
-      result = result && (hasName() == other.hasName());
-      if (hasName()) {
-        result = result && getName()
-            .equals(other.getName());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      if (hasName()) {
-        hash = (37 * hash) + NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getName().hashCode();
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
     }
 
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseFrom(
@@ -1940,57 +1735,46 @@ public final class StreamProto {
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
+      return PARSER.parseDelimitedFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
 
+    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
     public static Builder newBuilder(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      return newBuilder().mergeFrom(prototype);
     }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
+    public Builder toBuilder() { return newBuilder(this); }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -1998,7 +1782,7 @@ public final class StreamProto {
      * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey)
         io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKeyOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -2006,7 +1790,7 @@ public final class StreamProto {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -2019,20 +1803,27 @@ public final class StreamProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
         }
       }
+      private static Builder create() {
+        return new Builder();
+      }
+
       public Builder clear() {
         super.clear();
         name_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -2065,32 +1856,6 @@ public final class StreamProto {
         return result;
       }
 
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey) {
           return mergeFrom((io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey)other);
@@ -2105,13 +1870,13 @@ public final class StreamProto {
         if (other.hasName()) {
           setName(other.getName());
         }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
+        this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasName()) {
+          
           return false;
         }
         return true;
@@ -2126,7 +1891,7 @@ public final class StreamProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
+          throw e;
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -2170,53 +1935,16 @@ public final class StreamProto {
         onChanged();
         return this;
       }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
 
       // @@protoc_insertion_point(builder_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey)
     }
 
-    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey)
-    private static final io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey();
+      defaultInstance = new StreamKey(true);
+      defaultInstance.initFields();
     }
 
-    public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<StreamKey>
-        PARSER = new com.google.protobuf.AbstractParser<StreamKey>() {
-      public StreamKey parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StreamKey(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<StreamKey> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<StreamKey> getParserForType() {
-      return PARSER;
-    }
-
-    public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamKey getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
+    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamKey)
   }
 
   public interface StreamValueOrBuilder extends
@@ -2248,28 +1976,37 @@ public final class StreamProto {
   /**
    * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue}
    */
-  public  static final class StreamValue extends
-      com.google.protobuf.GeneratedMessageV3 implements
+  public static final class StreamValue extends
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue)
       StreamValueOrBuilder {
     // Use StreamValue.newBuilder() to construct.
-    private StreamValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private StreamValue(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StreamValue() {
-      createTag_ = 0L;
+    private StreamValue(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StreamValue defaultInstance;
+    public static StreamValue getDefaultInstance() {
+      return defaultInstance;
     }
 
+    public StreamValue getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
+        getUnknownFields() {
       return this.unknownFields;
     }
     private StreamValue(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
+      initFields();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -2312,7 +2049,7 @@ public final class StreamProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
+            e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -2323,11 +2060,26 @@ public final class StreamProto {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue.class, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StreamValue> PARSER =
+        new com.google.protobuf.AbstractParser<StreamValue>() {
+      public StreamValue parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StreamValue(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StreamValue> getParserForType() {
+      return PARSER;
     }
 
     private int bitField0_;
@@ -2358,15 +2110,19 @@ public final class StreamProto {
      * <code>optional .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition cursor = 2;</code>
      */
     public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition getCursor() {
-      return cursor_ == null ? io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : cursor_;
+      return cursor_;
     }
     /**
      * <code>optional .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition cursor = 2;</code>
      */
     public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder getCursorOrBuilder() {
-      return cursor_ == null ? io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : cursor_;
+      return cursor_;
     }
 
+    private void initFields() {
+      createTag_ = 0L;
+      cursor_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
+    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2389,17 +2145,19 @@ public final class StreamProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt64(1, createTag_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(2, getCursor());
+        output.writeMessage(2, cursor_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
+    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSize;
+      int size = memoizedSerializedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -2409,58 +2167,18 @@ public final class StreamProto {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, getCursor());
+          .computeMessageSize(2, cursor_);
       }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue)) {
-        return super.equals(obj);
-      }
-      io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue other = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue) obj;
-
-      boolean result = true;
-      result = result && (hasCreateTag() == other.hasCreateTag());
-      if (hasCreateTag()) {
-        result = result && (getCreateTag()
-            == other.getCreateTag());
-      }
-      result = result && (hasCursor() == other.hasCursor());
-      if (hasCursor()) {
-        result = result && getCursor()
-            .equals(other.getCursor());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      if (hasCreateTag()) {
-        hash = (37 * hash) + CREATETAG_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getCreateTag());
-      }
-      if (hasCursor()) {
-        hash = (37 * hash) + CURSOR_FIELD_NUMBER;
-        hash = (53 * hash) + getCursor().hashCode();
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
     }
 
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseFrom(
@@ -2486,57 +2204,46 @@ public final class StreamProto {
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
+      return PARSER.parseDelimitedFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
 
+    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
     public static Builder newBuilder(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      return newBuilder().mergeFrom(prototype);
     }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
+    public Builder toBuilder() { return newBuilder(this); }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -2544,7 +2251,7 @@ public final class StreamProto {
      * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue)
         io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValueOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -2552,7 +2259,7 @@ public final class StreamProto {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -2565,27 +2272,34 @@ public final class StreamProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getCursorFieldBuilder();
         }
       }
+      private static Builder create() {
+        return new Builder();
+      }
+
       public Builder clear() {
         super.clear();
         createTag_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000001);
         if (cursorBuilder_ == null) {
-          cursor_ = null;
+          cursor_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
         } else {
           cursorBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -2626,32 +2340,6 @@ public final class StreamProto {
         return result;
       }
 
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue) {
           return mergeFrom((io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue)other);
@@ -2669,17 +2357,18 @@ public final class StreamProto {
         if (other.hasCursor()) {
           mergeCursor(other.getCursor());
         }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
+        this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasCreateTag()) {
+          
           return false;
         }
         if (hasCursor()) {
           if (!getCursor().isInitialized()) {
+            
             return false;
           }
         }
@@ -2695,7 +2384,7 @@ public final class StreamProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
+          throw e;
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -2737,8 +2426,8 @@ public final class StreamProto {
         return this;
       }
 
-      private io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition cursor_ = null;
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition cursor_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
           io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder> cursorBuilder_;
       /**
        * <code>optional .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition cursor = 2;</code>
@@ -2751,7 +2440,7 @@ public final class StreamProto {
        */
       public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition getCursor() {
         if (cursorBuilder_ == null) {
-          return cursor_ == null ? io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : cursor_;
+          return cursor_;
         } else {
           return cursorBuilder_.getMessage();
         }
@@ -2792,7 +2481,6 @@ public final class StreamProto {
       public Builder mergeCursor(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition value) {
         if (cursorBuilder_ == null) {
           if (((bitField0_ & 0x00000002) == 0x00000002) &&
-              cursor_ != null &&
               cursor_ != io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance()) {
             cursor_ =
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.newBuilder(cursor_).mergeFrom(value).buildPartial();
@@ -2811,7 +2499,7 @@ public final class StreamProto {
        */
       public Builder clearCursor() {
         if (cursorBuilder_ == null) {
-          cursor_ = null;
+          cursor_ = io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance();
           onChanged();
         } else {
           cursorBuilder_.clear();
@@ -2834,18 +2522,17 @@ public final class StreamProto {
         if (cursorBuilder_ != null) {
           return cursorBuilder_.getMessageOrBuilder();
         } else {
-          return cursor_ == null ?
-              io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.getDefaultInstance() : cursor_;
+          return cursor_;
         }
       }
       /**
        * <code>optional .io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamPosition cursor = 2;</code>
        */
-      private com.google.protobuf.SingleFieldBuilderV3<
+      private com.google.protobuf.SingleFieldBuilder<
           io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder> 
           getCursorFieldBuilder() {
         if (cursorBuilder_ == null) {
-          cursorBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+          cursorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPosition.Builder, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamPositionOrBuilder>(
                   getCursor(),
                   getParentForChildren(),
@@ -2854,53 +2541,16 @@ public final class StreamProto {
         }
         return cursorBuilder_;
       }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
 
       // @@protoc_insertion_point(builder_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue)
     }
 
-    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue)
-    private static final io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue();
+      defaultInstance = new StreamValue(true);
+      defaultInstance.initFields();
     }
 
-    public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<StreamValue>
-        PARSER = new com.google.protobuf.AbstractParser<StreamValue>() {
-      public StreamValue parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StreamValue(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<StreamValue> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<StreamValue> getParserForType() {
-      return PARSER;
-    }
-
-    public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamValue getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
+    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamValue)
   }
 
   public interface StreamDataKeyOrBuilder extends
@@ -2928,29 +2578,37 @@ public final class StreamProto {
   /**
    * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey}
    */
-  public  static final class StreamDataKey extends
-      com.google.protobuf.GeneratedMessageV3 implements
+  public static final class StreamDataKey extends
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey)
       StreamDataKeyOrBuilder {
     // Use StreamDataKey.newBuilder() to construct.
-    private StreamDataKey(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private StreamDataKey(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StreamDataKey() {
-      name_ = com.google.protobuf.ByteString.EMPTY;
-      sequence_ = 0L;
+    private StreamDataKey(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StreamDataKey defaultInstance;
+    public static StreamDataKey getDefaultInstance() {
+      return defaultInstance;
     }
 
+    public StreamDataKey getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
+        getUnknownFields() {
       return this.unknownFields;
     }
     private StreamDataKey(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
+      initFields();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -2985,7 +2643,7 @@ public final class StreamProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
+            e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -2996,11 +2654,26 @@ public final class StreamProto {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey.class, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StreamDataKey> PARSER =
+        new com.google.protobuf.AbstractParser<StreamDataKey>() {
+      public StreamDataKey parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StreamDataKey(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StreamDataKey> getParserForType() {
+      return PARSER;
     }
 
     private int bitField0_;
@@ -3034,6 +2707,10 @@ public final class StreamProto {
       return sequence_;
     }
 
+    private void initFields() {
+      name_ = com.google.protobuf.ByteString.EMPTY;
+      sequence_ = 0L;
+    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -3054,17 +2731,19 @@ public final class StreamProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeBytes(1, name_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt64(2, sequence_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
+    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSize;
+      int size = memoizedSerializedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -3076,56 +2755,16 @@ public final class StreamProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, sequence_);
       }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey)) {
-        return super.equals(obj);
-      }
-      io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey other = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey) obj;
-
-      boolean result = true;
-      result = result && (hasName() == other.hasName());
-      if (hasName()) {
-        result = result && getName()
-            .equals(other.getName());
-      }
-      result = result && (hasSequence() == other.hasSequence());
-      if (hasSequence()) {
-        result = result && (getSequence()
-            == other.getSequence());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      if (hasName()) {
-        hash = (37 * hash) + NAME_FIELD_NUMBER;
-        hash = (53 * hash) + getName().hashCode();
-      }
-      if (hasSequence()) {
-        hash = (37 * hash) + SEQUENCE_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getSequence());
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
     }
 
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseFrom(
@@ -3151,57 +2790,46 @@ public final class StreamProto {
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
+      return PARSER.parseDelimitedFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
 
+    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
     public static Builder newBuilder(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      return newBuilder().mergeFrom(prototype);
     }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
+    public Builder toBuilder() { return newBuilder(this); }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -3209,7 +2837,7 @@ public final class StreamProto {
      * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey)
         io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKeyOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -3217,7 +2845,7 @@ public final class StreamProto {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -3230,15 +2858,18 @@ public final class StreamProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
         }
       }
+      private static Builder create() {
+        return new Builder();
+      }
+
       public Builder clear() {
         super.clear();
         name_ = com.google.protobuf.ByteString.EMPTY;
@@ -3246,6 +2877,10 @@ public final class StreamProto {
         sequence_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -3282,32 +2917,6 @@ public final class StreamProto {
         return result;
       }
 
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey) {
           return mergeFrom((io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey)other);
@@ -3325,16 +2934,17 @@ public final class StreamProto {
         if (other.hasSequence()) {
           setSequence(other.getSequence());
         }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
+        this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasName()) {
+          
           return false;
         }
         if (!hasSequence()) {
+          
           return false;
         }
         return true;
@@ -3349,7 +2959,7 @@ public final class StreamProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
+          throw e;
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -3425,53 +3035,16 @@ public final class StreamProto {
         onChanged();
         return this;
       }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
 
       // @@protoc_insertion_point(builder_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey)
     }
 
-    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey)
-    private static final io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey();
+      defaultInstance = new StreamDataKey(true);
+      defaultInstance.initFields();
     }
 
-    public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<StreamDataKey>
-        PARSER = new com.google.protobuf.AbstractParser<StreamDataKey>() {
-      public StreamDataKey parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StreamDataKey(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<StreamDataKey> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<StreamDataKey> getParserForType() {
-      return PARSER;
-    }
-
-    public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataKey getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
+    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataKey)
   }
 
   public interface StreamDataValueOrBuilder extends
@@ -3571,37 +3144,37 @@ public final class StreamProto {
   /**
    * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue}
    */
-  public  static final class StreamDataValue extends
-      com.google.protobuf.GeneratedMessageV3 implements
+  public static final class StreamDataValue extends
+      com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue)
       StreamDataValueOrBuilder {
     // Use StreamDataValue.newBuilder() to construct.
-    private StreamDataValue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    private StreamDataValue(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private StreamDataValue() {
-      createTag_ = 0L;
-      chunkIds_ = com.google.protobuf.ByteString.EMPTY;
-      logicalOffsets_ = com.google.protobuf.ByteString.EMPTY;
-      physicalOffsets_ = com.google.protobuf.ByteString.EMPTY;
-      startLogicalOffset_ = 0L;
-      endLogicalOffset_ = 0L;
-      startPhysicalOffset_ = 0L;
-      endPhysicalOffset_ = 0L;
-      goodLogicalOffset_ = 0L;
-      goodPhysicalOffset_ = 0L;
+    private StreamDataValue(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StreamDataValue defaultInstance;
+    public static StreamDataValue getDefaultInstance() {
+      return defaultInstance;
     }
 
+    public StreamDataValue getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
+        getUnknownFields() {
       return this.unknownFields;
     }
     private StreamDataValue(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
+      initFields();
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -3676,7 +3249,7 @@ public final class StreamProto {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
+            e.getMessage()).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -3687,11 +3260,26 @@ public final class StreamProto {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue.class, io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StreamDataValue> PARSER =
+        new com.google.protobuf.AbstractParser<StreamDataValue>() {
+      public StreamDataValue parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StreamDataValue(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StreamDataValue> getParserForType() {
+      return PARSER;
     }
 
     private int bitField0_;
@@ -3845,6 +3433,18 @@ public final class StreamProto {
       return goodPhysicalOffset_;
     }
 
+    private void initFields() {
+      createTag_ = 0L;
+      chunkIds_ = com.google.protobuf.ByteString.EMPTY;
+      logicalOffsets_ = com.google.protobuf.ByteString.EMPTY;
+      physicalOffsets_ = com.google.protobuf.ByteString.EMPTY;
+      startLogicalOffset_ = 0L;
+      endLogicalOffset_ = 0L;
+      startPhysicalOffset_ = 0L;
+      endPhysicalOffset_ = 0L;
+      goodLogicalOffset_ = 0L;
+      goodPhysicalOffset_ = 0L;
+    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -3897,6 +3497,7 @@ public final class StreamProto {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt64(1, createTag_);
       }
@@ -3927,11 +3528,12 @@ public final class StreamProto {
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         output.writeInt64(10, goodPhysicalOffset_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
+    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSize;
+      int size = memoizedSerializedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -3975,134 +3577,16 @@ public final class StreamProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(10, goodPhysicalOffset_);
       }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue)) {
-        return super.equals(obj);
-      }
-      io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue other = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue) obj;
-
-      boolean result = true;
-      result = result && (hasCreateTag() == other.hasCreateTag());
-      if (hasCreateTag()) {
-        result = result && (getCreateTag()
-            == other.getCreateTag());
-      }
-      result = result && (hasChunkIds() == other.hasChunkIds());
-      if (hasChunkIds()) {
-        result = result && getChunkIds()
-            .equals(other.getChunkIds());
-      }
-      result = result && (hasLogicalOffsets() == other.hasLogicalOffsets());
-      if (hasLogicalOffsets()) {
-        result = result && getLogicalOffsets()
-            .equals(other.getLogicalOffsets());
-      }
-      result = result && (hasPhysicalOffsets() == other.hasPhysicalOffsets());
-      if (hasPhysicalOffsets()) {
-        result = result && getPhysicalOffsets()
-            .equals(other.getPhysicalOffsets());
-      }
-      result = result && (hasStartLogicalOffset() == other.hasStartLogicalOffset());
-      if (hasStartLogicalOffset()) {
-        result = result && (getStartLogicalOffset()
-            == other.getStartLogicalOffset());
-      }
-      result = result && (hasEndLogicalOffset() == other.hasEndLogicalOffset());
-      if (hasEndLogicalOffset()) {
-        result = result && (getEndLogicalOffset()
-            == other.getEndLogicalOffset());
-      }
-      result = result && (hasStartPhysicalOffset() == other.hasStartPhysicalOffset());
-      if (hasStartPhysicalOffset()) {
-        result = result && (getStartPhysicalOffset()
-            == other.getStartPhysicalOffset());
-      }
-      result = result && (hasEndPhysicalOffset() == other.hasEndPhysicalOffset());
-      if (hasEndPhysicalOffset()) {
-        result = result && (getEndPhysicalOffset()
-            == other.getEndPhysicalOffset());
-      }
-      result = result && (hasGoodLogicalOffset() == other.hasGoodLogicalOffset());
-      if (hasGoodLogicalOffset()) {
-        result = result && (getGoodLogicalOffset()
-            == other.getGoodLogicalOffset());
-      }
-      result = result && (hasGoodPhysicalOffset() == other.hasGoodPhysicalOffset());
-      if (hasGoodPhysicalOffset()) {
-        result = result && (getGoodPhysicalOffset()
-            == other.getGoodPhysicalOffset());
-      }
-      result = result && unknownFields.equals(other.unknownFields);
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      if (hasCreateTag()) {
-        hash = (37 * hash) + CREATETAG_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getCreateTag());
-      }
-      if (hasChunkIds()) {
-        hash = (37 * hash) + CHUNKIDS_FIELD_NUMBER;
-        hash = (53 * hash) + getChunkIds().hashCode();
-      }
-      if (hasLogicalOffsets()) {
-        hash = (37 * hash) + LOGICALOFFSETS_FIELD_NUMBER;
-        hash = (53 * hash) + getLogicalOffsets().hashCode();
-      }
-      if (hasPhysicalOffsets()) {
-        hash = (37 * hash) + PHYSICALOFFSETS_FIELD_NUMBER;
-        hash = (53 * hash) + getPhysicalOffsets().hashCode();
-      }
-      if (hasStartLogicalOffset()) {
-        hash = (37 * hash) + STARTLOGICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getStartLogicalOffset());
-      }
-      if (hasEndLogicalOffset()) {
-        hash = (37 * hash) + ENDLOGICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getEndLogicalOffset());
-      }
-      if (hasStartPhysicalOffset()) {
-        hash = (37 * hash) + STARTPHYSICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getStartPhysicalOffset());
-      }
-      if (hasEndPhysicalOffset()) {
-        hash = (37 * hash) + ENDPHYSICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getEndPhysicalOffset());
-      }
-      if (hasGoodLogicalOffset()) {
-        hash = (37 * hash) + GOODLOGICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getGoodLogicalOffset());
-      }
-      if (hasGoodPhysicalOffset()) {
-        hash = (37 * hash) + GOODPHYSICALOFFSET_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-            getGoodPhysicalOffset());
-      }
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
     }
 
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseFrom(
@@ -4128,57 +3612,46 @@ public final class StreamProto {
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
+      return PARSER.parseDelimitedFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
+      return PARSER.parseFrom(input);
     }
     public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
+      return PARSER.parseFrom(input, extensionRegistry);
     }
 
+    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
     public static Builder newBuilder(io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+      return newBuilder().mergeFrom(prototype);
     }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
+    public Builder toBuilder() { return newBuilder(this); }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -4186,7 +3659,7 @@ public final class StreamProto {
      * Protobuf type {@code io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue)
         io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValueOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -4194,7 +3667,7 @@ public final class StreamProto {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -4207,15 +3680,18 @@ public final class StreamProto {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
         }
       }
+      private static Builder create() {
+        return new Builder();
+      }
+
       public Builder clear() {
         super.clear();
         createTag_ = 0L;
@@ -4239,6 +3715,10 @@ public final class StreamProto {
         goodPhysicalOffset_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000200);
         return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -4307,32 +3787,6 @@ public final class StreamProto {
         return result;
       }
 
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue) {
           return mergeFrom((io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue)other);
@@ -4374,40 +3828,49 @@ public final class StreamProto {
         if (other.hasGoodPhysicalOffset()) {
           setGoodPhysicalOffset(other.getGoodPhysicalOffset());
         }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
+        this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasCreateTag()) {
+          
           return false;
         }
         if (!hasChunkIds()) {
+          
           return false;
         }
         if (!hasLogicalOffsets()) {
+          
           return false;
         }
         if (!hasPhysicalOffsets()) {
+          
           return false;
         }
         if (!hasStartLogicalOffset()) {
+          
           return false;
         }
         if (!hasEndLogicalOffset()) {
+          
           return false;
         }
         if (!hasStartPhysicalOffset()) {
+          
           return false;
         }
         if (!hasEndPhysicalOffset()) {
+          
           return false;
         }
         if (!hasGoodLogicalOffset()) {
+          
           return false;
         }
         if (!hasGoodPhysicalOffset()) {
+          
           return false;
         }
         return true;
@@ -4422,7 +3885,7 @@ public final class StreamProto {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
+          throw e;
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -4760,91 +4223,54 @@ public final class StreamProto {
         onChanged();
         return this;
       }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
 
       // @@protoc_insertion_point(builder_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue)
     }
 
-    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue)
-    private static final io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue();
+      defaultInstance = new StreamDataValue(true);
+      defaultInstance.initFields();
     }
 
-    public static io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    @java.lang.Deprecated public static final com.google.protobuf.Parser<StreamDataValue>
-        PARSER = new com.google.protobuf.AbstractParser<StreamDataValue>() {
-      public StreamDataValue parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StreamDataValue(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<StreamDataValue> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<StreamDataValue> getParserForType() {
-      return PARSER;
-    }
-
-    public io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamProto.StreamDataValue getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
+    // @@protoc_insertion_point(class_scope:io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.stream.StreamDataValue)
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static  com.google.protobuf.Descriptors.FileDescriptor
+  private static com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -4889,37 +4315,37 @@ public final class StreamProto {
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamPosition_descriptor,
         new java.lang.String[] { "StreamSequence", "StreamLogicalOffset", "StreamPhysicalOffset", "ChunkIdHigh", "ChunkIdLow", "ChunkOrder", "ChunkOffset", });
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamSegment_descriptor,
         new java.lang.String[] { "StreamPosition", "Length", });
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamKey_descriptor,
         new java.lang.String[] { "Name", });
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamValue_descriptor,
         new java.lang.String[] { "CreateTag", "Cursor", });
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataKey_descriptor,
         new java.lang.String[] { "Name", "Sequence", });
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_io_pravega_segmentstore_storage_impl_chunkstream_storageos_rpc_stream_StreamDataValue_descriptor,
         new java.lang.String[] { "CreateTag", "ChunkIds", "LogicalOffsets", "PhysicalOffsets", "StartLogicalOffset", "EndLogicalOffset", "StartPhysicalOffset", "EndPhysicalOffset", "GoodLogicalOffset", "GoodPhysicalOffset", });
   }

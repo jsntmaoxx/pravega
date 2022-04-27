@@ -21,7 +21,6 @@ import io.pravega.segmentstore.storage.ThrottleSourceListener;
 import io.pravega.segmentstore.storage.ThrottlerSourceListenerCollection;
 import io.pravega.segmentstore.storage.WriteSettings;
 import io.pravega.segmentstore.storage.WriteTooLongException;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.CSConfiguration;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.ChunkConfig;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.dt.CmClient;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.ChunkStream;
@@ -57,6 +56,7 @@ public class ChunkStreamLog implements DurableDataLog {
     @Getter(AccessLevel.PACKAGE)
     private final CuratorFramework zkClient;
     private final CmClient cmClient;
+    private final ChunkConfig chunkConfig;
     private final ChunkStreamConfig config;
     private final ScheduledExecutorService executorService;
     private final AtomicBoolean closed;
@@ -82,11 +82,12 @@ public class ChunkStreamLog implements DurableDataLog {
      * @param config          Configuration to use.
      * @param executorService An Executor to use for async operations.
      */
-    ChunkStreamLog(int containerId, CuratorFramework zkClient, CmClient cmClient, ChunkStreamConfig config, ScheduledExecutorService executorService) {
+    ChunkStreamLog(int containerId, CuratorFramework zkClient, CmClient cmClient, ChunkConfig chunkConfig, ChunkStreamConfig config, ScheduledExecutorService executorService) {
         Preconditions.checkArgument(containerId >= 0, "containerId must be a non-negative integer.");
         this.logId = String.valueOf(containerId);
         this.zkClient = Preconditions.checkNotNull(zkClient, "zkClient");
         this.cmClient = Preconditions.checkNotNull(cmClient, "cmClient");
+        this.chunkConfig = Preconditions.checkNotNull(chunkConfig, "chunkConfig");
         this.config = Preconditions.checkNotNull(config, "config");
         this.executorService = Preconditions.checkNotNull(executorService, "executorService");
         this.closed = new AtomicBoolean();
@@ -157,9 +158,7 @@ public class ChunkStreamLog implements DurableDataLog {
             }
 
             // Open the Chunk Stream
-            ChunkStream logStream = new ChunkStream(cmClient,
-                    new ChunkConfig("16M", 8, 4,
-                            new CSConfiguration("16M", 8, 4)), executorService);
+            ChunkStream logStream = new ChunkStream(cmClient, this.chunkConfig, executorService);
             ChunkStreams.open(this.logId, logStream);
             log.info("{}: Opened Stream {}.", this.traceObjectId, logStream.getStreamId());
 
@@ -214,10 +213,6 @@ public class ChunkStreamLog implements DurableDataLog {
 
         CompletableFuture<LogAddress> result = new CompletableFuture<>();
         try {
-            if (loadMetadata().getEpoch() != getEpoch()) {
-                // We were fenced out. Convert to an appropriate exception.
-                throw new DataLogWriterNotPrimaryException("Unable to append with inconsistent epoch.");
-            }
             CompletableFuture<Long> future = logStream.append(convertData(data));
             future.whenCompleteAsync((offset, ex) -> {
                 if (ex != null) {
@@ -247,7 +242,7 @@ public class ChunkStreamLog implements DurableDataLog {
     @Override
     public CloseableIterator<ReadItem, DurableDataLogException> getReader() throws DurableDataLogException {
         ensurePreconditions();
-        return new LogReader(this.logId, getLogMetadata(), this.logStream);
+        return new LogReader(this.logId, getLogMetadata(), this.cmClient, this.chunkConfig, this.config, this.executorService);
     }
 
     @Override
@@ -390,11 +385,6 @@ public class ChunkStreamLog implements DurableDataLog {
      * @throws DurableDataLogException          If another kind of exception occurred.
      */
     private void persistMetadata(LogMetadata metadata, boolean create) throws DurableDataLogException {
-        if (metadata.getEpoch() != getEpoch()) {
-            // We were fenced out. Convert to an appropriate exception.
-            throw new DataLogWriterNotPrimaryException(
-                    String.format("Unable to persist metadata with inconsistent epoch for log (path = '%s%s').", this.zkClient.getNamespace(), this.logNodePath));
-        }
         try {
             byte[] serializedMetadata = LogMetadata.SERIALIZER.serialize(metadata).getCopy();
             Stat result = create
@@ -489,6 +479,12 @@ public class ChunkStreamLog implements DurableDataLog {
     private LogMetadata getLogMetadata() {
         synchronized (this.lock) {
             return this.logMetadata;
+        }
+    }
+
+    private ChunkStream getLogStream() {
+        synchronized (this.lock) {
+            return this.logStream;
         }
     }
 

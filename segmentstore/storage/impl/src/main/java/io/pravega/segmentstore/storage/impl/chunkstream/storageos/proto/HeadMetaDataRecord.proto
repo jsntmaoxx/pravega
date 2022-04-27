@@ -1,0 +1,25 @@
+package io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.HeadMetaData;
+
+message HeadMetaData {
+
+    //head type
+    required string headType = 1;
+
+    repeated Metadata umd = 2;
+}
+
+message HeadMetaDataList {
+
+    repeated HeadMetaData headmd = 1;
+}
+
+//TODO: Only one definition of MetaData needs to be used across all packages
+message Metadata {
+   required string key = 1;
+    required string value = 2;
+}
+
+//To hold protocol agnostic metadata.
+message GenericMetaDataList {
+	repeated Metadata umd = 1;
+}

@@ -1,0 +1,374 @@
+package io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.bucket;
+
+//option java_outer_classname = "BucketInfo";
+//option java_multiple_files = false;
+
+import "HeadMetaDataRecord.proto";
+import "SchemaKeyRecords.proto";
+import "AdvancedMetadataSearch.proto";
+
+message BucketInfo {
+
+    required string id = 1;
+
+    required string label = 2;
+
+    optional string vPoolId = 3;
+
+    optional string repGroup = 4;
+
+    optional bool isInitialized = 5;
+
+    optional string projectId = 6;
+
+    optional StringSet hostingDevices = 7;
+
+    optional uint64 fileAccessModeTimeout = 8;
+
+    optional string fileAccessMode = 9;
+
+    optional string prevFileAccessMode = 10;
+
+    optional sint64 version = 11;
+
+    optional sint64 lastUpdated = 12;
+
+    optional sint64 startVersion = 13;
+
+    optional sint64 endVersion = 14;
+
+    optional sint64 uid = 15;
+
+    optional string ownerUid = 16;
+
+    optional string hosts = 17;
+
+    optional sint64 flags = 18;
+
+    optional string aclStr = 19;
+
+    optional string apiType = 20;
+
+    optional string keypoolExpirationPolicy = 21;
+
+    optional StringMap keypoolMetadata = 22;
+
+    optional string sourceKeypool = 23;
+
+    optional bool fileSystemAccessEnabled = 24;
+
+    optional bool deleted = 25;
+
+    optional string vpoolType = 26;
+
+    optional string ingestionDeviceId = 27;
+
+    optional string rootDirForDirectoryPreservingFileAccess = 28;
+
+    optional string fileAccessDeviceId = 29;
+
+    optional bool hidden = 30;
+
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.HeadMetaData.HeadMetaDataList headMetadata = 31;
+
+    optional uint64 creationTime = 32;
+
+    optional string keypoolCorsConfig = 33;
+
+    optional string ownerzone = 34;
+
+    optional string cosId = 35;
+
+    optional string etag = 36;
+
+    optional int64 retention = 37 [deprecated = true];
+
+    optional BucketOwnerChange ownerChanged = 38;
+
+    optional bool isLocked = 39 [default = false];
+
+    optional bool isAlertRaised = 40;
+
+    optional sint64 SoftQuotaInGB = 41 [default = -1];
+
+    optional bool isStaleAllowed = 42 [default = false];
+
+    optional bool isStaleEverAllowed = 43 [default = false];
+
+    optional sint64 HardQuotaInGB = 44 [default = -1];
+
+    optional bool isWriteDisabled = 45;
+
+    optional string causeForWriteDisabled = 46;
+
+    optional int64 writeDisabledSetAtTime = 47;
+
+    // this flag is used to determine if this bucket could be cached.
+    // if any of its fields is modified, this bucket should not be cached by the client
+    optional bool cacheRetentionFlag = 48 [default = false];
+
+    optional bool isComplianceEnabled = 49 [default = false, deprecated = true];
+
+    optional bool isMetadataSearchEnabled = 50 [default = false];
+
+    optional SecondaryIndexList secondaryIndexes = 51;
+
+    optional string activeKeyId = 52;
+
+    optional bool isEncryptionEnabled = 53 [default=false];
+
+  	optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.HeadMetaData.GenericMetaDataList genericMDList = 54;
+
+    optional BucketRetention bucketRetention = 55;
+
+    optional bool isListableTagUpgraded = 56;
+
+    optional string lifecycleUid = 57;
+
+    //This is a bit map storing all kinds of flag, if you are to add more flag to bucketInfo, try to fit in here, BucketInfoBitMap.java
+    optional int64 bucketFlagBitMap = 58 [default = 0];
+
+    optional bool isTSOReadOnly = 59 [default = false];
+
+    optional string keypoolPolicy = 60;
+
+    // this locking parameters are exclusively internal. They are not controlled by the user as it happens to "isLocked" field.
+    // this locks are used to coordinate inter-zone updates and invalidation of KP caches.
+    optional string lockOwner = 61;
+
+    optional uint64 lockTimestamp = 62 [default = 0];
+
+    optional int64 openSnapshotId = 63 [default = 0];
+
+    optional int64 baselineSnapshotId = 64 [default = 0];
+
+    optional BucketSnapshotHistory bucketSnapshotHistory = 65;
+
+    // increments any time a snapshot item is marked as deleted or removed
+    optional int64 bucketSnapshotDeleteSequence = 66 [default = 0];
+
+    optional int64 auditedDeleteExpiration = 67;
+
+    optional int64 autoCommitPeriod = 68;
+
+    optional string iamUrnToIdMapping = 69;
+
+    optional string replicationPolicyEtag = 70;
+    optional string namespace = 71;
+    optional string defaultStoragePolicy = 72;
+    optional string notificationConfigEtag = 73;
+
+    optional bool isObjectLockEnabled = 74;
+
+    optional ObjectLockDefaultRetention objectLockDefaultRetention = 75;
+
+    optional sint64 HardQuotaInCount = 76 [default = -1];
+    optional sint64 SoftQuotaInCount = 77 [default = -1];
+    optional bool isQuotaAlertRaisedInCount = 78;
+
+    optional bool mdTokens = 79 [default = false]; // metadata index: interpret value as array or single string
+
+    // fields for advanced metadata search
+    // please do not change when merge for compatibility
+    optional bool isAdvancedMetadataSearchEnabled = 80 [default = false];
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.advancedmetadatasearch.BucketAdvancedMetadataSearchEventTarget advancedMetadataSearchTarget = 81;
+
+    optional string readFallbackBucket = 82; // bucket in the same namespace where the reads heads can be redirected to
+    optional bool isEmptyBucketInProgress = 83 [default = false];
+    optional int64 indexNumber = 84; //unique identifier for each bucket
+}
+
+enum NamingRule {
+    HEX_KEY_RULE= 0;
+    POC_KEY_RULE = 1;
+    OBJECT_KEY_RULE = 2;
+}
+
+
+message StringSet {
+    repeated string added = 1;
+
+    repeated string removed = 2;
+}
+
+message Entry {
+    required string key = 1;
+
+    optional string value = 2;
+}
+
+message StringMap {
+    repeated Entry added = 1;
+
+    repeated Entry removed = 2;
+}
+
+message BucketInfoList {
+    repeated BucketInfo bucketInfo = 1;
+}
+
+message PaginatedBucketInfoList {
+    optional string nextMarker = 1;
+    repeated BucketInfo bucketInfo = 2;
+}
+
+message BucketOwnerChange {
+    required string newOwner = 1;
+
+    repeated string previousOwners = 2;
+}
+
+message SecondaryIndexEntry {
+
+    required string metadataKey = 1;
+
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SecondaryIndexMetadataType metadataType = 2;
+
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SecondaryIndexValueType valueType = 3;
+}
+
+message SecondaryIndexList {
+    repeated SecondaryIndexEntry indexEntry = 1;
+}
+
+message ObjectLockDefaultRetention {
+    required string mode = 1;
+    required int64 retainSeconds = 2;
+}
+
+message BucketSnapshotHistory {
+    repeated BucketSnapshotItem list = 1;
+
+    // In case there are lots of snapshots, this entry can overflow to repo chunks.
+    //repeated io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.object.common.SegmentLocation repoFileLocations = 2;
+}
+
+message BucketSnapshotItem {
+    enum BucketSnapshotItemStatus {
+        ACTIVE = 0;
+        REVERTED = 1;
+        DELETED = 2;
+    }
+    required int64 snapShotId = 1;
+    required int64 baselineId = 2;
+    required int64 ctime = 3;
+    required BucketSnapshotItemStatus status = 4;
+    required string user = 5; //uid for the user
+    optional bool isStateDeleted = 6[default=false]; //
+}
+
+message BucketRetention {
+    enum Type {
+        BUCKET_RETENTION = 0;
+        MIN_FIXED_RETENTION = 1;
+        MAX_FIXED_RETENTION = 2;
+        MIN_VARIABLE_RETENTION = 3;
+        MAX_VARIABLE_RETENTION = 4;
+    }
+
+    message Retention {
+        required Type type = 1;
+        required sint64 value = 2;
+    }
+    optional bool enforceRetentionInfo = 1 [default = false];
+
+    repeated Retention retentions = 2;
+}
+
+// structure stored in RT
+message BucketReplicationPolicyRecord {
+    enum CompressionType {
+        NONE = 0;
+        SNAPPY = 1;
+    }
+
+    optional CompressionType compression = 1;
+    optional bytes policyDataPart = 2;
+    optional int64 mtime = 3;
+    optional bool lastPart = 4;
+}
+
+// structure representing a parsed policy
+message BucketReplicationPolicy {
+    message Tag {
+        required string key = 1;
+        required string value = 2;
+    }
+
+    message Destination {
+        required string bucketArn = 1;
+        optional string storageClass = 2;
+        optional string account = 3;
+        optional string accessControlTranslationOwner = 4;
+    }
+
+    message Rule {
+        optional string id = 1;
+        optional int32 priority = 2;
+
+        optional string filterPrefix = 3;
+        repeated Tag filterTags = 4;
+
+        required Destination destination = 5;
+    }
+
+    required string iamRole = 1;
+    repeated Rule enabledRules = 2;
+}
+
+// structure stored in RT
+message BucketNotificationConfigRecord {
+    optional string etag = 1;
+    optional bytes configXml = 2;
+    optional int64 mtime = 3;
+}
+
+message Event {
+    enum Type {
+        OBJECT_CREATED = 1;
+        OBJECT_REMOVED = 2;
+        REPLICATION = 3;
+    }
+    enum SubType {
+        WILD = 0;
+        PUT = 1;
+        COPY = 2;
+        COMPLETE_MPU = 3;
+        DELETED = 4;
+        DELETE_MARKER_CREATED = 5;
+        OPERATION_FAILED_REPLICATION = 6;
+    }
+
+    optional Type type = 1;
+    optional SubType subType = 2;
+}
+
+// structure representing a parsed policy
+message BucketNotificationConfig {
+    enum FilterRuleName {
+        PREFIX = 0;
+        SUFFIX = 1;
+    }
+
+    message FilterRule {
+        optional FilterRuleName name = 1;
+        optional string value = 2;
+    }
+
+    message S3KeyFilter {
+        repeated FilterRule filterRule = 1;
+    }
+
+    message Filter {
+        optional S3KeyFilter s3Key = 1;
+    }
+
+    message NotificationConfiguration {
+        optional string id = 1;
+        repeated Event events = 2;
+        optional Filter filter = 3;
+        optional string destination = 4;
+    }
+
+    repeated NotificationConfiguration notificationConfigurations = 1;
+}

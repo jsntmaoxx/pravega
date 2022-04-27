@@ -11,7 +11,6 @@ import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.metric
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.StreamChunkObject;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.FileOperationsPayloads;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.cm.CmMessage;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.cm.CmMessage.ClientEcEncodeCompletionRequest;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.DiskClient;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.DiskMessage;
 import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.dt.DTClient;
@@ -337,8 +336,8 @@ public class CmClientImpl extends DTClient implements CmClient {
             completeEcFuture.completeExceptionally(new CSException("null chunk ec copy"));
             return completeEcFuture;
         }
-        ClientEcEncodeCompletionRequest request =
-                ClientEcEncodeCompletionRequest.newBuilder()
+        CmMessage.ClientEcEncodeCompletionRequest request =
+                CmMessage.ClientEcEncodeCompletionRequest.newBuilder()
                                                .setChunkId(chunkObj.chunkIdStr())
                                                .setEcCopy(ecCopy)
                                                .setSealLength(sealLength)

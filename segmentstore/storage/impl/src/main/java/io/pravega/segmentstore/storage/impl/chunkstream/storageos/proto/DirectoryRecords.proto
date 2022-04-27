@@ -1,0 +1,145 @@
+package io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.dt;
+
+import "SchemaKeyRecords.proto";
+
+option java_package = "io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.dt";
+option java_outer_classname = "DTRecords";
+option java_multiple_files = false;
+
+// The messages between Directory Client and Server.
+
+enum DirectoryOperationStatus {
+    // the common status
+    SUCCESS = 0;
+    ERROR_INTERNAL = 1;
+    ERROR_TABLE_FULL = 2;
+    ERROR_DEVICE_FULL = 3;
+
+    // the status for KV operations
+    ERROR_KEY_EXIST = 20;
+    ERROR_KEY_NOT_FOUND = 21;
+
+    // the status for object operations
+    ERROR_OBJECT_NOT_FOUND = 30;
+    ERROR_ACCESS_DENIED = 31;
+    ERROR_OBJECT_SEGMENT_EXIST = 32;
+    ERROR_INACTIVE_MPU_UPLOAD = 33;
+    ERROR_OBJECT_EXPIRED = 34;
+    ERROR_VERSION_NOT_FOUND = 35;
+    ERROR_OBJECT_INVALID_RANGE = 36;
+    ERROR_OBJECT_UNDER_RETENTION = 37;
+    ERROR_VERSION_IS_MARKER = 38;
+    ERROR_REQUEST_THROTTLING = 39;
+    ERROR_OBJECT_EXIST = 40;
+    ERROR_OLD_VERSION_SKIPPED = 41;
+    ERROR_OBJECT_DELETED = 42;
+
+    // the status for request precondition checking
+    ERROR_PRECONDITION_FAILED = 50;
+    ERROR_MATCH = 51;
+    ERROR_UNMODIFIED = 52;
+    ERROR_VNEST_MEMBERSHIP_MODIFIED = 53;
+
+    // the status for object owner history
+    ERROR_DIFFERENT_EXPECTED_OWNER = 54;
+    ERROR_NOT_CURRENT_OBJECT_OWNER_ZONE = 55;
+
+    ERROR_INVALID_MPU_PART = 56;
+    ERROR_COPY_CROSS_ZONE = 57;
+
+    ERROR_INVALID_ARGUMENT = 58;
+
+    ERROR_OWNER_CHANGE_EXCEED_LIMIT = 59;
+
+    ERROR_CACHE_INVALIDATION_FAILED = 60;
+
+    // the status for lock operations
+    ERROR_LOCK_BLOCKED = 61;
+    ERROR_TESTLOCK_CAN_BE_GRANTED = 62;
+    ERROR_LOCK_DENIED = 63;
+    ERROR_TESTLOCK_DENIED = 64;
+    ERROR_DELETE_DIRECTORY_NOT_EMPTY = 65;
+    ERROR_RETENTION_INCORRECT = 66;
+    ERROR_BUCKET_MISMATCH = 67;
+
+    ERROR_ATMOS_TAG_NOT_FOUND = 68;
+
+    ERROR_KEYPOOL_LOCKED = 69;
+
+    ERROR_OBJECT_OWNER_PERMENANTLY_FAILED = 70;
+    ERROR_TSO_ON_GOING = 71;
+    ERROR_TIMEOUT = 72;
+
+    ERROR_OPERATION_NOT_ALLOWED = 73;
+
+    ERROR_KEYPOOL_NOT_FOUND = 74;
+
+    ERROR_INVALID_COPY_SOURCE_RANGE = 75;
+
+    // LS entry delete request sent old timestamp
+    ERROR_KEY_TIMESTAMP_TOO_OLD = 76;
+
+    ERROR_KEYPOOL_DELETED = 77;
+
+    ERROR_INVALID_PART_NUMBER = 78;
+    ERROR_RENAME_DIRECTORY_NOT_EMPTY = 79;
+
+    ERROR_OBJECT_DANGLING_LS = 80;
+
+    ERROR_DARE_MISMATCH = 81;
+    ERROR_BUCKET_LISTING_ALGO_MISMATCH = 83;
+}
+
+// The general key-value request for misc usages.
+// For example, store all object names for the keypool listing, the key
+// is keypoolid.objectname, the value is objectId. Or store the object file
+// entry, the key is like objectId.childname, the value includes like
+// the repository file pointer etc.
+
+message DirectoryKVEntry {
+    required io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaKey = 1;
+    required bytes value = 2;
+    optional string tag = 3;
+}
+
+message ListPrefixGroup {
+     required DirectoryKVEntry prefix = 1;
+     repeated DirectoryKVEntry entries = 2;
+}
+
+message DirectoryListKVRequest {
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaListPrefix = 1;
+    // where to begin listing
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaToken = 2;
+
+    // roll up entries to prefix+delimiter
+    optional string delimiter = 3;
+
+    // max number keys to return.  number returned may be less.
+    optional int32 maxKeys = 4;
+
+    optional bool includeUncommitted = 5;
+
+    optional string zone = 6;
+
+    optional bool isStaleAllowed = 7;
+
+    optional bool isTSOReadOnly = 8;
+
+    optional bool isReverseOrder = 9 [default = false];
+
+    optional int32 dtIndex = 10;
+
+    // where to end listing
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaListEndKey = 11;
+}
+
+message DirectoryListKVResponse {
+    required DirectoryOperationStatus status = 1 [default = SUCCESS];
+
+    repeated DirectoryKVEntry entries = 2;
+
+    repeated ListPrefixGroup prefixGroups = 3;
+
+    optional io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.types.SchemaKey schemaToken = 4;
+}

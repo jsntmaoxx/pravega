@@ -10,6 +10,7 @@ import lombok.Getter;
 public class ChunkStreamConfig {
     //region Config Names
 
+    public static final Property<String> ZK_METADATA_PATH = Property.named("zk.metadata.path", "/segmentstore/containers", "zkMetadataPath");
     public static final Property<Integer> CHUNK_STREAM_WRITE_TIMEOUT = Property.named("write.timeout.milliseconds", 60000, "chunkStreamWriteTimeoutMillis");
     public static final Property<Integer> MAX_OUTSTANDING_BYTES = Property.named("write.outstanding.bytes.max", 256 * 1024 * 1024, "maxOutstandingBytes");
 
@@ -21,6 +22,12 @@ public class ChunkStreamConfig {
     //endregion
 
     //region Members
+
+    /**
+     * Sub-namespace to use for ZooKeeper LogMetadata.
+     */
+    @Getter
+    private final String zkMetadataPath;
 
     /**
      * The Write Timeout (Chunk Stream Client), in milliseconds.
@@ -45,6 +52,7 @@ public class ChunkStreamConfig {
      * @param properties The TypedProperties object to read Properties from.
      */
     private ChunkStreamConfig(TypedProperties properties) throws ConfigurationException {
+        this.zkMetadataPath = properties.get(ZK_METADATA_PATH);
         this.chunkStreamWriteTimeoutMillis = properties.getInt(CHUNK_STREAM_WRITE_TIMEOUT);
         this.maxOutstandingBytes = properties.getInt(MAX_OUTSTANDING_BYTES);
     }
