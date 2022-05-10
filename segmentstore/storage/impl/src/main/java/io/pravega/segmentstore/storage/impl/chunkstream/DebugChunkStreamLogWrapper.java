@@ -1,5 +1,22 @@
+/**
+ * Copyright Pravega Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.pravega.segmentstore.storage.impl.chunkstream;
 
+import com.emc.storageos.data.cs.common.ChunkConfig;
+import com.emc.storageos.data.cs.dt.CmClient;
 import io.pravega.common.util.CloseableIterator;
 import io.pravega.common.util.CompositeArrayView;
 import io.pravega.segmentstore.storage.DataLogInitializationException;
@@ -11,8 +28,6 @@ import io.pravega.segmentstore.storage.QueueStats;
 import io.pravega.segmentstore.storage.ReadOnlyLogMetadata;
 import io.pravega.segmentstore.storage.ThrottleSourceListener;
 import io.pravega.segmentstore.storage.WriteSettings;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.ChunkConfig;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.dt.CmClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.apache.curator.framework.CuratorFramework;
@@ -46,11 +61,12 @@ public class DebugChunkStreamLogWrapper implements DebugDurableDataLogWrapper {
     /**
      * Creates a new instance of the DebugLogWrapper class.
      *
-     * @param logId      The Id of the BookKeeperLog to wrap.
-     * @param zkClient   A pointer to the CuratorFramework client to use.
-     * @param cmClient   A pointer to the cm client to use.
-     * @param config     BookKeeperConfig to use.
-     * @param executor   An Executor to use for async operations.
+     * @param logId       The id of the ChunkStreamLog to wrap.
+     * @param zkClient    A pointer to the CuratorFramework client to use.
+     * @param cmClient    A pointer to the cm client to use.
+     * @param chunkConfig Configuration for chunk to use.
+     * @param config      Configuration for chunk stream log to use.
+     * @param executor    An Executor to use for async operations.
      */
     DebugChunkStreamLogWrapper(int logId, CuratorFramework zkClient, CmClient cmClient, ChunkConfig chunkConfig, ChunkStreamConfig config, ScheduledExecutorService executor) {
         this.log = new ChunkStreamLog(logId, zkClient, cmClient, chunkConfig, config, executor);
@@ -105,7 +121,7 @@ public class DebugChunkStreamLogWrapper implements DebugDurableDataLogWrapper {
             byte[] serializedMetadata = LogMetadata.SERIALIZER.serialize((LogMetadata) metadata).getCopy();
             this.log.getZkClient().setData().forPath(this.log.getLogNodePath(), serializedMetadata);
         } catch (Exception e) {
-            throw new DurableDataLogException("Problem overwriting Bookkeeper Log metadata.", e);
+            throw new DurableDataLogException("Problem overwriting Chunk Stream Log metadata.", e);
         }
     }
 
@@ -120,7 +136,36 @@ public class DebugChunkStreamLogWrapper implements DebugDurableDataLogWrapper {
         try {
             this.log.getZkClient().delete().forPath(this.log.getLogNodePath());
         } catch (Exception e) {
-            throw new DurableDataLogException("Problem deleting Bookkeeper Log metadata.", e);
+            throw new DurableDataLogException("Problem deleting Chunk Stream Log metadata.", e);
+        }
+    }
+
+    /**
+     * Updates the Metadata for this ChunkStreamLog in ZooKeeper by setting its Enabled flag to true.
+     * @throws DurableDataLogException If an exception occurred.
+     */
+    public void enable() throws DurableDataLogException {
+        this.log.enable();
+    }
+
+    /**
+     * Initialize the ChunkStreamLog (initializes it), then updates the Metadata for it in ZooKeeper by setting its
+     * Enabled flag to false.
+     * @throws DurableDataLogException If an exception occurred.
+     */
+    public void disable() throws DurableDataLogException {
+        initialize();
+        this.log.disable();
+    }
+
+    private void initialize() throws DurableDataLogException {
+        if (this.initialized.compareAndSet(false, true)) {
+            try {
+                this.log.initialize(DEFAULT_TIMEOUT);
+            } catch (Exception ex) {
+                this.initialized.set(false);
+                throw ex;
+            }
         }
     }
 
@@ -139,9 +184,8 @@ public class DebugChunkStreamLogWrapper implements DebugDurableDataLogWrapper {
         }
 
         @Override
-        public CloseableIterator<ReadItem, DurableDataLogException> getReader() {
-            return new LogReader(this.logId, this.logMetadata, DebugChunkStreamLogWrapper.this.cmClient,
-                    DebugChunkStreamLogWrapper.this.chunkConfig, DebugChunkStreamLogWrapper.this.config, DebugChunkStreamLogWrapper.this.executor);
+        public CloseableIterator<ReadItem, DurableDataLogException> getReader() throws DurableDataLogException {
+            return new LogReader(this.logId, this.logMetadata, DebugChunkStreamLogWrapper.this.cmClient, DebugChunkStreamLogWrapper.this.chunkConfig, DebugChunkStreamLogWrapper.this.config, DebugChunkStreamLogWrapper.this.executor);
         }
 
         @Override

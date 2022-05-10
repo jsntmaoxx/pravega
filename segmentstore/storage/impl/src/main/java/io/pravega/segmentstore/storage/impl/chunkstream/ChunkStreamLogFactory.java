@@ -1,5 +1,31 @@
+/**
+ * Copyright Pravega Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.pravega.segmentstore.storage.impl.chunkstream;
 
+import com.emc.storageos.data.cs.chunk.CmDiskFileTestClient;
+import com.emc.storageos.data.cs.common.CSConfiguration;
+import com.emc.storageos.data.cs.common.ChunkConfig;
+import com.emc.storageos.data.cs.common.Cluster;
+import com.emc.storageos.data.cs.dt.cache.ChunkCache;
+import com.emc.storageos.data.cs.dt.cache.ChunkHashMapCache;
+import com.emc.storageos.rpc.disk.DiskServer;
+import com.emc.storageos.rpc.disk.hdd.HDDRpcClientServer;
+import com.emc.storageos.rpc.disk.hdd.HDDRpcConfiguration;
+import com.emc.storageos.rpc.disk.hdd.HDDServer;
+import com.emc.storageos.rpc.disk.writer.DiskFileChunkWriter;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.pravega.common.Exceptions;
@@ -8,21 +34,7 @@ import io.pravega.segmentstore.storage.DataLogNotAvailableException;
 import io.pravega.segmentstore.storage.DurableDataLog;
 import io.pravega.segmentstore.storage.DurableDataLogException;
 import io.pravega.segmentstore.storage.DurableDataLogFactory;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.chunk.CmDummyTestClient;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.CSConfiguration;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.ChunkConfig;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.Cluster;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.DummyCluster;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.dt.CmClient;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.DiskClient;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.DiskMessage;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.DiskRpcClientServer;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.hdd.HDDClient;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.hdd.HDDRpcClientServer;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.hdd.HDDRpcConfiguration;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.rpc.disk.hdd.msg.HDDMessage;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.curator.framework.CuratorFramework;
 
 import javax.annotation.concurrent.GuardedBy;
@@ -47,11 +59,14 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
 
     private final String namespace;
     private final CuratorFramework zkClient;
-    private final AtomicReference<CmClient> cmClient;
-    private final ChunkConfig chunkConfig;
     private final CSConfiguration csConfig;
+    private final ChunkConfig chunkConfig;
     private final ChunkStreamConfig config;
     private final ScheduledExecutorService executor;
+    private final HDDRpcClientServer diskRpcClientServer;
+    private final DiskFileChunkWriter diskFileChunkWriter;
+    private final DiskServer diskServer;
+    private final AtomicReference<CmDiskFileTestClient> cmClient;
     @GuardedBy("this")
     private final Map<Integer, LogInitializationRecord> logInitializationTracker = new HashMap<>();
     @GuardedBy("this")
@@ -76,6 +91,10 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
         this.namespace = zkClient.getNamespace();
         this.zkClient = Preconditions.checkNotNull(zkClient, "zkClient")
                 .usingNamespace(this.namespace + this.config.getZkMetadataPath());
+        HDDRpcConfiguration hddRpcConfig = new HDDRpcConfiguration();
+        this.diskRpcClientServer = new HDDRpcClientServer(hddRpcConfig);
+        this.diskFileChunkWriter = new DiskFileChunkWriter(this.csConfig);
+        this.diskServer = new HDDServer(hddRpcConfig, Cluster.ssDataPort, Cluster.ssManagePort, this.diskFileChunkWriter);
         this.cmClient = new AtomicReference<>();
     }
 
@@ -85,10 +104,13 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
 
     @Override
     public void close() {
-        val cm = this.cmClient.getAndSet(null);
+        this.diskRpcClientServer.shutdown();
+        this.diskServer.shutdown();
+        this.diskFileChunkWriter.close();
+        CmDiskFileTestClient cm = this.cmClient.getAndSet(null);
         if (cm != null) {
             try {
-                // cm.close();
+                cm.shutdown();
             } catch (Exception ex) {
                 log.error("Unable to close cm client.", ex);
             }
@@ -103,6 +125,7 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
     public void initialize() throws DurableDataLogException {
         Preconditions.checkState(this.cmClient.get() == null, "ChunkStreamLogFactory is already initialized.");
         try {
+            this.diskServer.start();
             this.cmClient.set(startCmClient());
         } catch (IllegalArgumentException | NullPointerException ex) {
             // Most likely a configuration issue; re-throw as is.
@@ -115,20 +138,20 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
             }
 
             // ZooKeeper not reachable, some other environment issue.
-            throw new DataLogNotAvailableException("Unable to establish connection to ZooKeeper or Chunk Stream.", ex);
+            throw new DataLogNotAvailableException("Unable to establish connection to ZooKeeper or chunk stream.", ex);
         }
     }
 
     @Override
     public DurableDataLog createDurableDataLog(int logId) {
-        Preconditions.checkState(this.cmClient.get() != null, "BookKeeperLogFactory is not initialized.");
+        Preconditions.checkState(this.cmClient.get() != null, "ChunkStreamLogFactory is not initialized.");
         tryResetCmClient(logId);
         return new ChunkStreamLog(logId, this.zkClient, this.cmClient.get(), this.chunkConfig, this.config, this.executor);
     }
 
     @Override
     public DebugChunkStreamLogWrapper createDebugLogWrapper(int logId) {
-        Preconditions.checkState(this.cmClient.get() != null, "BookKeeperLogFactory is not initialized.");
+        Preconditions.checkState(this.cmClient.get() != null, "ChunkStreamLogFactory is not initialized.");
         tryResetCmClient(logId);
         return new DebugChunkStreamLogWrapper(logId, this.zkClient, this.cmClient.get(), this.chunkConfig, this.config, this.executor);
     }
@@ -150,7 +173,7 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
      * @return The cm client.
      */
     @VisibleForTesting
-    public CmClient getCmClient() {
+    public CmDiskFileTestClient getCmClient() {
         return this.cmClient.get();
     }
 
@@ -158,12 +181,9 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
 
     //region Initialization
 
-    private CmClient startCmClient() {
-        HDDRpcConfiguration hddRpcConfig = new HDDRpcConfiguration();
-        DiskRpcClientServer<HDDMessage> diskRpcClientServer = new HDDRpcClientServer(hddRpcConfig);
-        Cluster cluster = new DummyCluster();
-        DiskClient<? extends DiskMessage> diskClient = new HDDClient(diskRpcClientServer, this.csConfig, cluster);
-        return new CmDummyTestClient(this.csConfig, diskClient);
+    private CmDiskFileTestClient startCmClient() {
+        ChunkCache chunkCache = new ChunkHashMapCache();
+        return new CmDiskFileTestClient(this.csConfig, this.diskRpcClientServer, chunkCache);
     }
 
     /**
@@ -176,21 +196,21 @@ public class ChunkStreamLogFactory implements DurableDataLogFactory {
         synchronized (this) {
             LogInitializationRecord record = logInitializationTracker.get(logId);
             if (record != null) {
-                // Account for a restart of the Bookkeeper log.
+                // Account for a restart of the chunk stream log.
                 record.incrementLogCreations();
                 // If the number of restarts for a single container is meets the threshold, let's reset the BK client.
                 if (record.isCmClientResetNeeded()
                         && lastCmClientReset.get().getElapsed().compareTo(LOG_CREATION_INSPECTION_PERIOD) > 0) {
                     try {
                         log.info("Start creating cm client in reset.");
-                        CmClient newClient = startCmClient();
+                        CmDiskFileTestClient newClient = startCmClient();
                         // If we have been able to create a new client successfully, reset the current one and update timer.
                         log.info("Successfully created new cm client, setting it as the new one to use.");
-                        CmClient oldClient = this.cmClient.getAndSet(newClient);
+                        CmDiskFileTestClient oldClient = this.cmClient.getAndSet(newClient);
                         lastCmClientReset.set(new Timer());
                         // Lastly, attempt to close the old client.
                         log.info("Attempting to close old client.");
-                        // oldClient.close();
+                        oldClient.shutdown();
                     } catch (Exception e) {
                         throw new RuntimeException("Failure resetting the cm client", e);
                     }

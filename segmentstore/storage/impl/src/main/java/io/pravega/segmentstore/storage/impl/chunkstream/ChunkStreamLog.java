@@ -1,5 +1,23 @@
+/**
+ * Copyright Pravega Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.pravega.segmentstore.storage.impl.chunkstream;
 
+import com.emc.storageos.data.cs.common.ChunkConfig;
+import com.emc.storageos.data.cs.dt.CmClient;
+import com.emc.storageos.data.cs.stream.ChunkStreamWriter;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import io.pravega.common.Exceptions;
@@ -11,7 +29,6 @@ import io.pravega.common.util.CloseableIterator;
 import io.pravega.common.util.CompositeArrayView;
 import io.pravega.segmentstore.storage.DataLogDisabledException;
 import io.pravega.segmentstore.storage.DataLogInitializationException;
-import io.pravega.segmentstore.storage.DataLogNotAvailableException;
 import io.pravega.segmentstore.storage.DataLogWriterNotPrimaryException;
 import io.pravega.segmentstore.storage.DurableDataLog;
 import io.pravega.segmentstore.storage.DurableDataLogException;
@@ -21,9 +38,7 @@ import io.pravega.segmentstore.storage.ThrottleSourceListener;
 import io.pravega.segmentstore.storage.ThrottlerSourceListenerCollection;
 import io.pravega.segmentstore.storage.WriteSettings;
 import io.pravega.segmentstore.storage.WriteTooLongException;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.common.ChunkConfig;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.dt.CmClient;
-import io.pravega.segmentstore.storage.impl.chunkstream.storageos.data.cs.stream.ChunkStream;
+import io.pravega.segmentstore.storage.impl.HierarchyUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -63,7 +78,7 @@ public class ChunkStreamLog implements DurableDataLog {
     private final Object lock = new Object();
     private final String traceObjectId;
     @GuardedBy("lock")
-    private ChunkStream logStream;
+    private ChunkStreamWriter streamWriter;
     @GuardedBy("lock")
     private LogMetadata logMetadata;
     private final ChunkMetrics.ChunkStreamLog metrics;
@@ -76,10 +91,11 @@ public class ChunkStreamLog implements DurableDataLog {
     /**
      * Creates a new instance of the Chunk Log class.
      *
-     * @param containerId     The id of the Container whose ChunkLog to open.
+     * @param containerId     The id of the Container whose ChunkStreamLog to open.
      * @param zkClient        A reference to the CuratorFramework client to use.
-     * @param cmClient        A reference to the cmClient to use.
-     * @param config          Configuration to use.
+     * @param cmClient        A reference to the cm client to use.
+     * @param chunkConfig     Configuration for chunk to use.
+     * @param config          Configuration for chunk stream log to use.
      * @param executorService An Executor to use for async operations.
      */
     ChunkStreamLog(int containerId, CuratorFramework zkClient, CmClient cmClient, ChunkConfig chunkConfig, ChunkStreamConfig config, ScheduledExecutorService executorService) {
@@ -109,17 +125,17 @@ public class ChunkStreamLog implements DurableDataLog {
             this.metrics.close();
 
             // Close active chunk.
-            ChunkStream logStream;
+            ChunkStreamWriter streamWriter;
             synchronized (this.lock) {
-                logStream = this.logStream;
-                this.logStream = null;
+                streamWriter = this.streamWriter;
+                this.streamWriter = null;
                 this.logMetadata = null;
             }
 
             try {
-                ChunkStreams.close(logStream);
+                ChunkStreams.close(streamWriter);
             } catch (DurableDataLogException ex) {
-                log.error("{}: Unable to close Stream {}.", this.traceObjectId, this.logId, ex);
+                log.error("{}: Unable to close stream writer {}.", this.traceObjectId, streamWriter.streamId(), ex);
             }
 
             log.info("{}: Closed.", this.traceObjectId);
@@ -133,38 +149,34 @@ public class ChunkStreamLog implements DurableDataLog {
     /**
      * Open-Fences this Chunk log using the following protocol:
      * 1. Read Log Metadata from ZooKeeper.
-     * 2. Open the Chunk Stream.
+     * 2. Open the chunk stream.
      * 3. Update Log Metadata using compare-and-set (this update contains the new epoch).
      *
      * @param timeout Timeout for the operation.
-     * @throws DataLogWriterNotPrimaryException If we were fenced-out during this process.
-     * @throws DataLogNotAvailableException     If Chunk Stream or ZooKeeper are not available.
-     * @throws DataLogDisabledException         If the ChunkLog is disabled. No fencing is attempted in this case.
-     * @throws DataLogInitializationException   If a general initialization error occurred.
-     * @throws DurableDataLogException          If another type of exception occurred.
+     * @throws DurableDataLogException If exception occurred.
      */
     @Override
     public void initialize(Duration timeout) throws DurableDataLogException {
         LogMetadata newMetadata;
         synchronized (this.lock) {
-            Preconditions.checkState(this.logStream == null, "ChunkLog is already initialized.");
-            assert this.logMetadata == null : "logStream == null but logMetadata != null";
+            Preconditions.checkState(this.streamWriter == null, "ChunkStreamLog is already initialized.");
+            assert this.logMetadata == null : "streamWriter == null but logMetadata != null";
 
             // Get metadata about the current state of the log, if any.
             LogMetadata oldMetadata = loadMetadata();
 
             if (oldMetadata != null && !oldMetadata.isEnabled()) {
-                throw new DataLogDisabledException("ChunkLog is disabled. Cannot initialize.");
+                throw new DataLogDisabledException("ChunkStreamLog is disabled. Cannot initialize.");
             }
 
-            // Open the Chunk Stream
-            ChunkStream logStream = new ChunkStream(cmClient, this.chunkConfig, executorService);
-            ChunkStreams.open(this.logId, logStream);
-            log.info("{}: Opened Stream {}.", this.traceObjectId, logStream.getStreamId());
+            // Open the chunk stream
+            ChunkStreamWriter streamWriter = new ChunkStreamWriter(cmClient, this.chunkConfig, executorService);
+            ChunkStreams.open(this.logId, true, streamWriter);
+            log.info("{}: Opened Stream {}.", this.traceObjectId, streamWriter.streamId());
 
             // Update Metadata and persist to ZooKeeper.
             newMetadata = updateMetadataEpoch(oldMetadata);
-            this.logStream = logStream;
+            this.streamWriter = streamWriter;
             this.logMetadata = newMetadata;
         }
 
@@ -177,7 +189,7 @@ public class ChunkStreamLog implements DurableDataLog {
         synchronized (this.lock) {
             ensurePreconditions();
             LogMetadata metadata = loadMetadata();
-            Preconditions.checkState(metadata != null && !metadata.isEnabled(), "ChunkLog is already enabled.");
+            Preconditions.checkState(metadata != null && !metadata.isEnabled(), "ChunkStreamLog is already enabled.");
             metadata = metadata.asEnabled();
             persistMetadata(metadata, false);
             log.info("{}: Enabled (Epoch = {}, UpdateVersion = {}).", this.traceObjectId, metadata.getEpoch(), metadata.getUpdateVersion());
@@ -190,14 +202,14 @@ public class ChunkStreamLog implements DurableDataLog {
         synchronized (this.lock) {
             ensurePreconditions();
             LogMetadata metadata = getLogMetadata();
-            Preconditions.checkState(metadata.isEnabled(), "ChunkLog is already disabled.");
+            Preconditions.checkState(metadata.isEnabled(), "ChunkStreamLog is already disabled.");
             metadata = this.logMetadata.asDisabled();
             persistMetadata(metadata, false);
             this.logMetadata = metadata;
             log.info("{}: Disabled (Epoch = {}, UpdateVersion = {}).", this.traceObjectId, metadata.getEpoch(), metadata.getUpdateVersion());
         }
 
-        // Close this instance of the ChunkLog. This ensures the proper cancellation of any ongoing writes.
+        // Close this instance of the ChunkStreamLog. This ensures the proper cancellation of any ongoing writes.
         close();
     }
 
@@ -213,7 +225,7 @@ public class ChunkStreamLog implements DurableDataLog {
 
         CompletableFuture<LogAddress> result = new CompletableFuture<>();
         try {
-            CompletableFuture<Long> future = logStream.append(convertData(data));
+            CompletableFuture<Long> future = streamWriter.append(convertData(data));
             future.whenCompleteAsync((offset, ex) -> {
                 if (ex != null) {
                     handleWriteException(ex);
@@ -260,7 +272,8 @@ public class ChunkStreamLog implements DurableDataLog {
 
     @Override
     public QueueStats getQueueStatistics() {
-        return this.logStream.getQueueStatistics();
+        // return this.logStream.getQueueStatistics();
+        return new QueueStats(0, 0, 1024 * 1024, 0);
     }
 
     @Override
@@ -310,9 +323,9 @@ public class ChunkStreamLog implements DurableDataLog {
         }
 
         try {
-            ChunkStreams.truncate(this.logStream, upToAddress);
+            ChunkStreams.truncate(this.streamWriter, upToAddress);
         } catch (DurableDataLogException ex) {
-            log.error("{}: Unable to truncated stream {} up to {}.", this.traceObjectId, this.logStream.getStreamId(), upToAddress, ex);
+            log.error("{}: Unable to truncated stream {} up to {}.", this.traceObjectId, this.streamWriter.streamId(), upToAddress, ex);
         }
 
         log.info("{}: Truncated up to {}.", this.traceObjectId, upToAddress);
@@ -447,7 +460,7 @@ public class ChunkStreamLog implements DurableDataLog {
      * Persists the given metadata into ZooKeeper, overwriting whatever was there previously.
      *
      * @param metadata Thew metadata to write.
-     * @throws IllegalStateException    If this ChunkLog is not disabled.
+     * @throws IllegalStateException    If this ChunkStreamLog is not disabled.
      * @throws IllegalArgumentException If `metadata.getUpdateVersion` does not match the current version in ZooKeeper.
      * @throws DurableDataLogException  If another kind of exception occurred. See {@link #persistMetadata}.
      */
@@ -456,7 +469,7 @@ public class ChunkStreamLog implements DurableDataLog {
         LogMetadata currentMetadata = loadMetadata();
         boolean create = currentMetadata == null;
         if (!create) {
-            Preconditions.checkState(!currentMetadata.isEnabled(), "Cannot overwrite metadata if ChunkLog is enabled.");
+            Preconditions.checkState(!currentMetadata.isEnabled(), "Cannot overwrite metadata if ChunkStreamLog is enabled.");
             Preconditions.checkArgument(currentMetadata.getUpdateVersion() == metadata.getUpdateVersion(),
                     "Wrong Update Version; expected %s, given %s.", currentMetadata.getUpdateVersion(), metadata.getUpdateVersion());
         }
@@ -473,7 +486,7 @@ public class ChunkStreamLog implements DurableDataLog {
     }
 
     private void reportMetrics() {
-        this.metrics.queueStats(this.logStream.getQueueStatistics());
+        // this.metrics.queueStats(this.logStream.getQueueStatistics());
     }
 
     private LogMetadata getLogMetadata() {
@@ -482,22 +495,22 @@ public class ChunkStreamLog implements DurableDataLog {
         }
     }
 
-    private ChunkStream getLogStream() {
+    private ChunkStreamWriter getStreamWriter() {
         synchronized (this.lock) {
-            return this.logStream;
+            return this.streamWriter;
         }
     }
 
     private void ensurePreconditions() {
         Exceptions.checkNotClosed(this.closed.get(), this);
         synchronized (this.lock) {
-            Preconditions.checkState(this.logStream != null, "ChunkLog is not initialized.");
+            Preconditions.checkState(this.streamWriter != null, "ChunkStreamLog is not initialized.");
             assert this.logMetadata != null : "logMetadata == null";
         }
     }
 
     private String getLogNodePath(int containerId) {
-        return containerId + "/chunkstream/" + containerId;
+        return "/chunkstream" + HierarchyUtils.getPath(containerId, this.config.getZkHierarchyDepth());
     }
 
     //endregion
