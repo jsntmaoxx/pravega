@@ -150,8 +150,10 @@ public class DurableLog extends AbstractService implements OperationLog {
                         .whenComplete((v, ex) -> {
                             if (ex == null) {
                                 // We are done.
+                                log.error("test::mxx {} performRecovery success", this.traceObjectId);
                                 notifyDelayedStartComplete(null);
                             } else {
+                                log.error("test::mxx {} performRecovery failed", this.traceObjectId);
                                 if (Exceptions.unwrap(ex) instanceof DataLogDisabledException) {
                                     // Place the DurableLog in a Started State, but keep trying to restart.
                                     notifyStartComplete(null);

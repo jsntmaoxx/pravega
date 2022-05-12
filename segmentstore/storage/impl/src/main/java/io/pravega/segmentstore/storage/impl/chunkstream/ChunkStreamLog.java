@@ -107,7 +107,7 @@ public class ChunkStreamLog implements DurableDataLog {
         this.config = Preconditions.checkNotNull(config, "config");
         this.executorService = Preconditions.checkNotNull(executorService, "executorService");
         this.closed = new AtomicBoolean();
-        this.logNodePath = getLogNodePath(containerId);
+        this.logNodePath = HierarchyUtils.getPath(containerId, this.config.getZkHierarchyDepth());
         this.traceObjectId = String.format("Log[%d]", containerId);
         this.metrics = new ChunkMetrics.ChunkStreamLog(containerId);
         this.metricReporter = this.executorService.scheduleWithFixedDelay(this::reportMetrics, REPORT_INTERVAL, REPORT_INTERVAL, TimeUnit.MILLISECONDS);
@@ -507,10 +507,6 @@ public class ChunkStreamLog implements DurableDataLog {
             Preconditions.checkState(this.streamWriter != null, "ChunkStreamLog is not initialized.");
             assert this.logMetadata != null : "logMetadata == null";
         }
-    }
-
-    private String getLogNodePath(int containerId) {
-        return "/chunkstream" + HierarchyUtils.getPath(containerId, this.config.getZkHierarchyDepth());
     }
 
     //endregion

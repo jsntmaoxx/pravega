@@ -294,6 +294,7 @@ class StreamSegmentContainer extends AbstractService implements SegmentContainer
     }
 
     private CompletableFuture<Void> startWhenDurableLogOnline() {
+        log.error("test::mxx {} startWhenDurableLogOnline", this.traceObjectId);
         CompletableFuture<Void> isReady;
         CompletableFuture<Void> delayedStart;
         if (this.durableLog.isOffline()) {
@@ -937,6 +938,7 @@ class StreamSegmentContainer extends AbstractService implements SegmentContainer
     private void ensureRunning() {
         Exceptions.checkNotClosed(this.closed.get(), this);
         if (state() != State.RUNNING) {
+            log.error("test::mxx {} IllegalContainerStateException", this.traceObjectId);
             throw new IllegalContainerStateException(this.getId(), state(), State.RUNNING);
         } else if (isOffline()) {
             throw new ContainerOfflineException(getId());

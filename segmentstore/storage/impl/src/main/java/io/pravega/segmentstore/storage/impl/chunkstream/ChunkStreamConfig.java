@@ -28,10 +28,10 @@ import lombok.Getter;
 public class ChunkStreamConfig {
     //region Config Names
 
-    public static final Property<String> ZK_METADATA_PATH = Property.named("zk.metadata.path", "/segmentstore/containers", "zkMetadataPath");
+    public static final Property<String> ZK_METADATA_PATH = Property.named("zk.metadata.path", "/segmentstore/containers/chunkstream", "zkMetadataPath");
     public static final Property<Integer> ZK_HIERARCHY_DEPTH = Property.named("zk.metadata.hierarchy.depth", 2, "zkHierarchyDepth");
     public static final Property<Integer> CHUNK_STREAM_WRITE_TIMEOUT = Property.named("write.timeout.milliseconds", 60000, "chunkStreamWriteTimeoutMillis");
-    public static final Property<Integer> CHUNK_STREAM_READ_TIMEOUT = Property.named("read.timeout.milliseconds", 60000, "chunkStreamReadTimeoutMillis");
+    public static final Property<Integer> CHUNK_STREAM_READ_TIMEOUT = Property.named("read.timeout.milliseconds", 30000, "chunkStreamReadTimeoutMillis");
     public static final Property<Integer> MAX_OUTSTANDING_BYTES = Property.named("write.outstanding.bytes.max", 256 * 1024 * 1024, "maxOutstandingBytes");
 
     public static final String COMPONENT_CODE = "chunkstream";

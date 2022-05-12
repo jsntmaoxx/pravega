@@ -21,14 +21,13 @@ import io.pravega.common.ObjectBuilder;
 import io.pravega.common.io.serialization.RevisionDataInput;
 import io.pravega.common.io.serialization.RevisionDataOutput;
 import io.pravega.common.io.serialization.VersionedSerializer;
-import io.pravega.segmentstore.storage.ReadOnlyLogMetadata;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LogMetadata implements ReadOnlyLogMetadata {
+public class LogMetadata implements ReadOnlyChunkStreamLogMetadata {
     //region Members
 
     static final VersionedSerializer.WithBuilder<LogMetadata, LogMetadataBuilder> SERIALIZER = new Serializer();
